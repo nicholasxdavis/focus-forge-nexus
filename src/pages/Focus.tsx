@@ -51,11 +51,6 @@ export default function Focus() {
 
   const handleSessionComplete = () => {
     setIsRunning(false);
-    
-    // Play completion sound (optional)
-    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBCuAzPLaizsIGGS56+ybTg4PWrHq8Kt2KAU6j9ryz3g0AyZ+zPPalT0LGnO96e6VQQoRYrfq6KJQEw1NqeHxtGIaBy6I1/DQYx4DK3vL8NqMPgkZbrzt8JVBChVvvOvqmVcKFGKz6OSzYRoEOI/Y8dFyLwMoesz02YI9CRVvvO7tl0QIFm256+udUQ0MUqnf7rVvHAU2jNrx2nwzAyluy/HeiFEKGmW75++gTAoQW7Pq65VZBQ9SqN/us2MaBS+H1/HReC4EJnLH89qJOwkWar3u8JlECRlpu+vsmE0LElyl5O+xYBsFN4zZ8sx1OQQkcMrz24I9BhhntPDoklQKEVqy5vCZVgoRXbPq7KFSDxNcr+Twm0IBF127SY7MjkuNS5BSlFWYWZ1cn2CiZKVoqm2tcbF0tHi4e7yAv4TDiMeNy5HPlNOY1+Dc5ODk6ejt7PH09tj6/f4AAA==');
-    audio.play().catch(() => {});
-
     if (!isBreak) {
       setIsBreak(true);
       setTimeLeft(breakDuration * 60);

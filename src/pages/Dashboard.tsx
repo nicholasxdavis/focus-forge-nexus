@@ -44,9 +44,8 @@ export default function Dashboard() {
   const [newTask, setNewTask] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // User progress data
   const [userLevel] = useState(3);
-  const [userXP] = useState(350);
+  const [userProgress] = useState(65);
   const [streak] = useState(7);
   const [focusMinutes] = useState(45);
 
@@ -106,7 +105,6 @@ export default function Dashboard() {
 
   const completedTasks = tasks.filter((t) => t.completed).length;
   const progressPercent = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
-  const xpProgress = (userXP % 100);
 
   return (
     <div className="min-h-screen bg-background">
@@ -210,8 +208,8 @@ export default function Dashboard() {
                   <Trophy className="h-5 w-5 text-primary" />
                 </div>
                 <p className="text-3xl font-bold">{userLevel}</p>
-                <Progress value={xpProgress} className="mt-2 h-2" />
-                <p className="text-xs text-muted-foreground mt-1">{userXP % 100}/100 {t('dashboard.xp')}</p>
+                <Progress value={userProgress} className="mt-2 h-2" />
+                <p className="text-xs text-muted-foreground mt-1">{userProgress}% to next level</p>
               </Card>
 
               <Card className="p-6 glass hover-lift">

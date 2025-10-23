@@ -21,53 +21,41 @@ import {
   Menu,
   X,
   Brain,
-  Sparkles,
-  Timer,
 } from 'lucide-react';
 
 export default function Progress() {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Mock user data - in production this would come from a database
   const [userData] = useState({
-    level: 8,
-    xp: 3450,
-    totalXP: 4000,
-    streak: 14,
-    longestStreak: 28,
-    tasksCompleted: 127,
-    focusMinutes: 1842,
+    level: 3,
+    progress: 65,
+    streak: 7,
+    longestStreak: 12,
+    tasksCompleted: 48,
+    focusMinutes: 340,
     achievements: [
       { id: 1, name: 'First Steps', desc: 'Complete your first task', unlocked: true, icon: '🎯' },
       { id: 2, name: 'Week Warrior', desc: '7-day streak', unlocked: true, icon: '🔥' },
-      { id: 3, name: 'Focus Master', desc: '100 focus sessions', unlocked: true, icon: '⏱️' },
-      { id: 4, name: 'Century Club', desc: 'Complete 100 tasks', unlocked: true, icon: '💯' },
-      { id: 5, name: 'Early Bird', desc: 'Start session before 8am', unlocked: true, icon: '🌅' },
-      { id: 6, name: 'Night Owl', desc: 'Complete task after 10pm', unlocked: true, icon: '🦉' },
-      { id: 7, name: 'Consistency King', desc: '30-day streak', unlocked: false, icon: '👑' },
-      { id: 8, name: 'Zen Master', desc: '50 mindfulness sessions', unlocked: false, icon: '🧘' },
-      { id: 9, name: 'Productivity Pro', desc: 'Reach level 10', unlocked: false, icon: '⚡' },
+      { id: 3, name: 'Focus Master', desc: '50+ focus sessions', unlocked: false, icon: '⏱️' },
+      { id: 4, name: 'Task Champion', desc: 'Complete 100 tasks', unlocked: false, icon: '💯' },
+      { id: 5, name: 'Consistency King', desc: '30-day streak', unlocked: false, icon: '👑' },
+      { id: 6, name: 'Night Owl', desc: 'Complete task after 10pm', unlocked: false, icon: '🦉' },
     ],
     weeklyData: [
-      { day: 'Mon', tasks: 8, minutes: 125 },
-      { day: 'Tue', tasks: 12, minutes: 180 },
-      { day: 'Wed', tasks: 10, minutes: 150 },
-      { day: 'Thu', tasks: 15, minutes: 210 },
-      { day: 'Fri', tasks: 9, minutes: 135 },
-      { day: 'Sat', tasks: 6, minutes: 90 },
-      { day: 'Sun', tasks: 7, minutes: 105 },
+      { day: 'Mon', tasks: 5, minutes: 45 },
+      { day: 'Tue', tasks: 8, minutes: 60 },
+      { day: 'Wed', tasks: 6, minutes: 50 },
+      { day: 'Thu', tasks: 9, minutes: 70 },
+      { day: 'Fri', tasks: 7, minutes: 55 },
+      { day: 'Sat', tasks: 4, minutes: 30 },
+      { day: 'Sun', tasks: 5, minutes: 35 },
     ],
     recentMilestones: [
-      { date: '2 days ago', text: 'Reached Level 8!', icon: '🎉' },
-      { date: '1 week ago', text: 'Unlocked "Focus Master"', icon: '⏱️' },
-      { date: '2 weeks ago', text: 'Completed 100th task!', icon: '💯' },
+      { date: '2 days ago', text: 'Completed 7-day streak!', icon: '🔥' },
+      { date: '1 week ago', text: 'Reached Level 3', icon: '🎉' },
     ],
   });
-
-  const xpProgress = ((userData.xp % 1000) / 1000) * 100;
-  const nextLevel = Math.floor(userData.xp / 1000) + 1;
-  const xpNeeded = (nextLevel * 1000) - userData.xp;
 
   const maxTasks = Math.max(...userData.weeklyData.map(d => d.tasks));
   const maxMinutes = Math.max(...userData.weeklyData.map(d => d.minutes));
@@ -145,38 +133,33 @@ export default function Progress() {
               <p className="text-muted-foreground">Track your journey to better focus and productivity</p>
             </div>
 
-            {/* Level & XP Card */}
+            {/* Level Card */}
             <Card className="p-8 glass bg-gradient-glow border-primary/30">
               <div className="flex flex-col md:flex-row items-center gap-6">
-                <div className="w-32 h-32 rounded-full bg-gradient-primary flex items-center justify-center shrink-0 relative">
+                <div className="w-28 h-28 rounded-full bg-gradient-primary flex items-center justify-center shrink-0">
                   <div className="text-center">
-                    <Trophy className="h-12 w-12 text-background mx-auto mb-1" />
+                    <Trophy className="h-10 w-10 text-background mx-auto mb-1" />
                     <span className="text-3xl font-bold text-background">{userData.level}</span>
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-primary border-4 border-card flex items-center justify-center">
-                    <Sparkles className="h-5 w-5 text-background" />
                   </div>
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-3xl font-bold mb-2">Level {userData.level}</h2>
-                  <p className="text-muted-foreground mb-4">
-                    {xpNeeded} XP until Level {nextLevel}
+                  <h2 className="text-2xl font-bold mb-2">Level {userData.level}</h2>
+                  <p className="text-muted-foreground mb-3">
+                    {100 - userData.progress}% until Level {userData.level + 1}
                   </p>
-                  <ProgressBar value={xpProgress} className="h-3 mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    {userData.xp.toLocaleString()} / {userData.totalXP.toLocaleString()} XP
-                  </p>
+                  <ProgressBar value={userData.progress} className="h-2 mb-2" />
+                  <p className="text-sm text-muted-foreground">{userData.progress}% complete</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 rounded-lg bg-card border border-border">
-                    <Flame className="h-6 w-6 text-primary mx-auto mb-1" />
-                    <p className="text-2xl font-bold">{userData.streak}</p>
-                    <p className="text-xs text-muted-foreground">Day Streak</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
+                    <Flame className="h-5 w-5 text-primary mx-auto mb-1" />
+                    <p className="text-xl font-bold">{userData.streak}</p>
+                    <p className="text-xs text-muted-foreground">Days</p>
                   </div>
-                  <div className="text-center p-4 rounded-lg bg-card border border-border">
-                    <CheckCircle2 className="h-6 w-6 text-primary mx-auto mb-1" />
-                    <p className="text-2xl font-bold">{userData.tasksCompleted}</p>
-                    <p className="text-xs text-muted-foreground">Tasks Done</p>
+                  <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
+                    <CheckCircle2 className="h-5 w-5 text-primary mx-auto mb-1" />
+                    <p className="text-xl font-bold">{userData.tasksCompleted}</p>
+                    <p className="text-xs text-muted-foreground">Tasks</p>
                   </div>
                 </div>
               </div>
@@ -341,17 +324,17 @@ export default function Progress() {
               </TabsContent>
             </Tabs>
 
-            {/* Motivational CTA */}
+            {/* CTA */}
             <Card className="p-8 glass bg-gradient-glow text-center border-primary/20">
-              <Brain className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Keep Going! 🚀</h2>
+              <Brain className="h-10 w-10 text-primary mx-auto mb-3" />
+              <h2 className="text-2xl font-bold mb-2">You're Doing Great! 🚀</h2>
               <p className="text-muted-foreground mb-6">
-                You're {xpNeeded} XP away from Level {nextLevel}. Complete more tasks to level up!
+                Keep completing tasks and focus sessions to reach Level {userData.level + 1}
               </p>
               <Link to="/tasks">
                 <Button size="lg" className="bg-gradient-primary glow-primary">
                   <CheckCircle2 className="mr-2 h-5 w-5" />
-                  View My Tasks
+                  Continue Tasks
                 </Button>
               </Link>
             </Card>
