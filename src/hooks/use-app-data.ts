@@ -518,6 +518,9 @@ export const useAppData = () => {
     userProgress,
     achievements,
     dailyStats,
+    focusSessions,
+    habits,
+    settings,
     isLoaded,
 
     // Task operations
@@ -530,6 +533,23 @@ export const useAppData = () => {
     recordTaskCompletion,
     recordFocusSession,
     recordBodyDoublingSession,
+
+    // Focus session operations
+    recordFocusSessionData,
+
+    // Habit operations
+    addHabit,
+    updateHabit,
+    deleteHabit,
+    completeHabitToday,
+
+    // Settings operations
+    updateSettings,
+
+    // Data operations
+    exportData,
+    importData,
+    resetAllData,
 
     // Queries
     getWeeklyStats,
