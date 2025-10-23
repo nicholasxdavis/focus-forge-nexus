@@ -95,7 +95,7 @@ const DEFAULT_USER_PROGRESS: UserProgress = {
 };
 
 const DEFAULT_ACHIEVEMENTS: Achievement[] = [
-  { id: 1, name: 'First Steps', desc: 'Complete your first task', unlocked: false, icon: '��' },
+  { id: 1, name: 'First Steps', desc: 'Complete your first task', unlocked: false, icon: '🎯' },
   { id: 2, name: 'Week Warrior', desc: '7-day streak', unlocked: false, icon: '🔥' },
   { id: 3, name: 'Focus Master', desc: '50+ focus sessions', unlocked: false, icon: '⏱️' },
   { id: 4, name: 'Task Champion', desc: 'Complete 100 tasks', unlocked: false, icon: '💯' },
@@ -202,10 +202,13 @@ export const useAppData = () => {
           userProgress,
           achievements,
           dailyStats,
+          focusSessions,
+          habits,
+          settings,
         })
       );
     }
-  }, [tasks, userProgress, achievements, dailyStats, isLoaded]);
+  }, [tasks, userProgress, achievements, dailyStats, focusSessions, habits, settings, isLoaded]);
 
   const addTask = useCallback((task: Omit<Task, 'id' | 'createdAt'>) => {
     const newTask: Task = {
