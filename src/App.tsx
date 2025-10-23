@@ -14,6 +14,8 @@ import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import Focus from "./pages/Focus";
 import Progress from "./pages/Progress";
+import Settings from "./pages/Settings";
+import FocusHistory from "./pages/FocusHistory";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
