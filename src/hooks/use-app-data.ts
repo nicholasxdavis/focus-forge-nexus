@@ -424,6 +424,94 @@ export const useAppData = () => {
     return stats;
   }, [dailyStats]);
 
+  const recordFocusSessionData = useCallback((session: Omit<FocusSession, 'id'>) => {
+    const newSession: FocusSession = {
+      ...session,
+      id: Date.now().toString(),
+    };
+    setFocusSessions((prev) => [newSession, ...prev]);
+    return newSession;
+  }, []);
+
+  const addHabit = useCallback((habit: Omit<Habit, 'id' | 'createdAt' | 'completedDates'>) => {
+    const newHabit: Habit = {
+      ...habit,
+      id: Date.now().toString(),
+      createdAt: Date.now(),
+      completedDates: [],
+    };
+    setHabits((prev) => [newHabit, ...prev]);
+    return newHabit;
+  }, []);
+
+  const updateHabit = useCallback((id: string, updates: Partial<Habit>) => {
+    setHabits((prev) => prev.map((h) => (h.id === id ? { ...h, ...updates } : h)));
+  }, []);
+
+  const deleteHabit = useCallback((id: string) => {
+    setHabits((prev) => prev.filter((h) => h.id !== id));
+  }, []);
+
+  const completeHabitToday = useCallback((id: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    setHabits((prev) =>
+      prev.map((h) => {
+        if (h.id === id && !h.completedDates.includes(today)) {
+          return { ...h, completedDates: [...h.completedDates, today] };
+        }
+        return h;
+      })
+    );
+    awardXP(10);
+  }, [awardXP]);
+
+  const updateSettings = useCallback((newSettings: Partial<UserSettings>) => {
+    setSettings((prev) => ({ ...prev, ...newSettings }));
+  }, []);
+
+  const exportData = useCallback(() => {
+    return {
+      tasks,
+      userProgress,
+      achievements,
+      dailyStats,
+      focusSessions,
+      habits,
+      settings,
+      exportDate: new Date().toISOString(),
+    };
+  }, [tasks, userProgress, achievements, dailyStats, focusSessions, habits, settings]);
+
+  const importData = useCallback(
+    (data: any) => {
+      try {
+        if (data.tasks) setTasks(data.tasks);
+        if (data.userProgress) setUserProgress(data.userProgress);
+        if (data.achievements) setAchievements(data.achievements);
+        if (data.dailyStats) setDailyStats(data.dailyStats);
+        if (data.focusSessions) setFocusSessions(data.focusSessions);
+        if (data.habits) setHabits(data.habits);
+        if (data.settings) setSettings(data.settings);
+        return true;
+      } catch (e) {
+        console.error('Import failed:', e);
+        return false;
+      }
+    },
+    []
+  );
+
+  const resetAllData = useCallback(() => {
+    setTasks([]);
+    setUserProgress(DEFAULT_USER_PROGRESS);
+    setAchievements(DEFAULT_ACHIEVEMENTS);
+    setDailyStats([]);
+    setFocusSessions([]);
+    setHabits([]);
+    setSettings(DEFAULT_SETTINGS);
+    localStorage.removeItem(STORAGE_KEY);
+  }, []);
+
   return {
     // State
     tasks,
