@@ -10,6 +10,7 @@ import { OnboardingFlow } from '@/components/OnboardingFlow';
 import { TutorialTooltip } from '@/components/TutorialTooltip';
 import { RatingPopup } from '@/components/RatingPopup';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useAppContext } from '@/context/AppDataContext';
 import {
   Zap,
   Plus,
@@ -21,54 +22,61 @@ import {
   Target,
   Menu,
   X,
+  Mic,
+  Loader2,
 } from 'lucide-react';
-
-interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-}
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const appContext = useAppContext();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
   const [showRating, setShowRating] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: '1', title: 'Complete onboarding', completed: true, priority: 'high' },
-    { id: '2', title: 'Try the focus timer', completed: false, priority: 'medium' },
-    { id: '3', title: 'Add your first real task', completed: false, priority: 'medium' },
-  ]);
   const [newTask, setNewTask] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const [userLevel] = useState(3);
-  const [userProgress] = useState(65);
-  const [streak] = useState(7);
-  const [focusMinutes] = useState(45);
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<any>(null);
 
   useEffect(() => {
+    // Initialize speech recognition
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript.trim()) {
+          setNewTask(transcript.trim());
+        }
+        setIsListening(false);
+      };
+      recognitionInstance.onerror = () => {
+        setIsListening(false);
+      };
+      setRecognition(recognitionInstance);
+    }
+
     // Check if user is new
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
     if (!hasSeenOnboarding) {
       setShowOnboarding(true);
     }
 
-    // Show tutorial after onboarding
     const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
     if (hasSeenOnboarding && !hasSeenTutorial) {
       setTimeout(() => setShowTutorial(true), 1000);
     }
 
-    // Show rating popup after some usage
     const sessionCount = parseInt(localStorage.getItem('sessionCount') || '0');
     if (sessionCount > 5 && !localStorage.getItem('hasRated')) {
       setTimeout(() => setShowRating(true), 10000);
     }
 
-    // Increment session count
     localStorage.setItem('sessionCount', String(sessionCount + 1));
   }, []);
 
@@ -89,22 +97,35 @@ export default function Dashboard() {
 
   const addTask = () => {
     if (!newTask.trim()) return;
-    const task: Task = {
-      id: Date.now().toString(),
+    appContext.addTask({
       title: newTask,
+      notes: '',
       completed: false,
       priority: 'medium',
-    };
-    setTasks([...tasks, task]);
+    });
     setNewTask('');
   };
 
   const toggleTask = (id: string) => {
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
+    const task = appContext.tasks.find((t) => t.id === id);
+    if (task) {
+      appContext.updateTask(id, { 
+        completed: !task.completed,
+        completedAt: !task.completed ? Date.now() : undefined
+      });
+    }
   };
 
-  const completedTasks = tasks.filter((t) => t.completed).length;
-  const progressPercent = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
+  const startVoiceCapture = () => {
+    if (recognition && !isListening) {
+      setIsListening(true);
+      recognition.start();
+    }
+  };
+
+  const todayTasks = appContext.getTodayTasks();
+  const completedTasks = appContext.getCompletedTasksToday();
+  const progressPercent = appContext.tasks.length > 0 ? (completedTasks / appContext.tasks.length) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -147,7 +168,7 @@ export default function Dashboard() {
         >
           <nav className="p-4 space-y-2">
             <Link to="/dashboard">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start bg-primary/10">
                 <Target className="mr-2 h-4 w-4" />
                 {t('nav.dashboard')}
               </Button>
@@ -167,7 +188,7 @@ export default function Dashboard() {
             <Link to="/progress">
               <Button variant="ghost" className="w-full justify-start">
                 <Trophy className="mr-2 h-4 w-4" />
-                Progress
+                Your Progress
               </Button>
             </Link>
           </nav>
@@ -197,7 +218,7 @@ export default function Dashboard() {
                     <span className="text-sm text-muted-foreground">{t('dashboard.yourStreak')}</span>
                     <Flame className="h-5 w-5 text-primary" />
                   </div>
-                  <p className="text-3xl font-bold">{streak}</p>
+                  <p className="text-3xl font-bold">{appContext.userProgress.streak}</p>
                   <p className="text-xs text-muted-foreground">{t('dashboard.days')}</p>
                 </Card>
               </TutorialTooltip>
@@ -207,9 +228,11 @@ export default function Dashboard() {
                   <span className="text-sm text-muted-foreground">{t('dashboard.level')}</span>
                   <Trophy className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userLevel}</p>
-                <Progress value={userProgress} className="mt-2 h-2" />
-                <p className="text-xs text-muted-foreground mt-1">{userProgress}% to next level</p>
+                <p className="text-3xl font-bold">{appContext.userProgress.level}</p>
+                <Progress value={appContext.userProgress.currentLevelXp / appContext.userProgress.maxLevelXp * 100} className="mt-2 h-2" />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {appContext.userProgress.maxLevelXp - appContext.userProgress.currentLevelXp} XP to next level
+                </p>
               </Card>
 
               <Card className="p-6 glass hover-lift">
@@ -217,7 +240,7 @@ export default function Dashboard() {
                   <span className="text-sm text-muted-foreground">{t('dashboard.focusTime')}</span>
                   <Timer className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{focusMinutes}</p>
+                <p className="text-3xl font-bold">{appContext.userProgress.focusMinutes}</p>
                 <p className="text-xs text-muted-foreground">{t('dashboard.minutes')}</p>
               </Card>
 
@@ -226,8 +249,8 @@ export default function Dashboard() {
                   <span className="text-sm text-muted-foreground">Tasks Done</span>
                   <CheckCircle2 className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{completedTasks}/{tasks.length}</p>
-                <Progress value={progressPercent} className="mt-2 h-2" />
+                <p className="text-3xl font-bold">{appContext.userProgress.tasksCompleted}</p>
+                <Progress value={Math.min(progressPercent, 100)} className="mt-2 h-2" />
               </Card>
             </div>
 
@@ -251,7 +274,23 @@ export default function Dashboard() {
                     <Plus className="h-4 w-4 mr-2" />
                     {t('dashboard.addTask')}
                   </Button>
+                  <Button
+                    onClick={startVoiceCapture}
+                    variant="outline"
+                    size="icon"
+                    className={isListening ? 'bg-red-500/20 border-red-500' : ''}
+                    title="Capture task by voice"
+                  >
+                    {isListening ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Mic className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  💡 {isListening ? 'Listening...' : 'Click the mic to capture tasks by voice'}
+                </p>
               </Card>
             </TutorialTooltip>
 
@@ -264,11 +303,11 @@ export default function Dashboard() {
             >
               <Card className="p-6 glass">
                 <h2 className="text-2xl font-bold mb-4">{t('dashboard.todayTasks')}</h2>
-                {tasks.length === 0 ? (
+                {todayTasks.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">{t('dashboard.noTasks')}</p>
                 ) : (
                   <div className="space-y-2">
-                    {tasks.map((task) => (
+                    {todayTasks.map((task) => (
                       <div
                         key={task.id}
                         onClick={() => toggleTask(task.id)}
@@ -312,7 +351,7 @@ export default function Dashboard() {
               <Card className="p-8 glass bg-gradient-glow text-center">
                 <h2 className="text-2xl font-bold mb-4">Ready to Focus?</h2>
                 <p className="text-muted-foreground mb-6">
-                  Start a focus session and crush your tasks with visual timers and breaks.
+                  Start a focus session and crush your tasks with visual timers and breathing breaks.
                 </p>
                 <Link to="/focus">
                   <Button size="lg" className="bg-gradient-primary glow-primary">
