@@ -10,6 +10,7 @@ import { OnboardingFlow } from '@/components/OnboardingFlow';
 import { TutorialTooltip } from '@/components/TutorialTooltip';
 import { RatingPopup } from '@/components/RatingPopup';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { BodyDoublingSession } from '@/components/BodyDoublingSession';
 import { useAppContext } from '@/context/AppDataContext';
 import {
   Zap,
@@ -24,6 +25,7 @@ import {
   X,
   Mic,
   Loader2,
+  Users,
 } from 'lucide-react';
 
 export default function Dashboard() {
