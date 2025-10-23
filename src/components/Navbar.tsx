@@ -96,11 +96,6 @@ export const Navbar = () => {
             ))}
             <div className="pt-4 space-y-2">
               <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-                <Button variant="ghost" className="w-full">
-                  {t('nav.signIn')}
-                </Button>
-              </Link>
-              <Link to="/dashboard" onClick={() => setIsOpen(false)}>
                 <Button className="w-full bg-gradient-primary glow-primary">
                   {t('nav.getStarted')}
                 </Button>
