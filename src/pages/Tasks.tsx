@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useAppContext } from '@/context/AppDataContext';
 import {
   Zap,
   Plus,
@@ -24,47 +25,15 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 
-interface Task {
-  id: string;
-  title: string;
-  notes: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-  dueDate?: string;
-}
-
 export default function Tasks() {
   const { t } = useTranslation();
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: '1',
-      title: 'Review project proposal',
-      notes: 'Check budget and timeline',
-      completed: false,
-      priority: 'high',
-      dueDate: '2025-11-01',
-    },
-    {
-      id: '2',
-      title: 'Schedule team meeting',
-      notes: '',
-      completed: false,
-      priority: 'medium',
-    },
-    {
-      id: '3',
-      title: 'Update documentation',
-      notes: 'Add new API endpoints',
-      completed: true,
-      priority: 'low',
-    },
-  ]);
+  const appContext = useAppContext();
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     notes: '',
-    priority: 'medium' as Task['priority'],
+    priority: 'medium' as 'high' | 'medium' | 'low',
     dueDate: '',
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -73,22 +42,22 @@ export default function Tasks() {
     e.preventDefault();
     if (!formData.title.trim()) return;
 
-    if (editingTask) {
-      setTasks(
-        tasks.map((t) =>
-          t.id === editingTask.id
-            ? { ...t, ...formData }
-            : t
-        )
-      );
-      setEditingTask(null);
+    if (editingTaskId) {
+      appContext.updateTask(editingTaskId, {
+        title: formData.title,
+        notes: formData.notes,
+        priority: formData.priority,
+        dueDate: formData.dueDate,
+      });
+      setEditingTaskId(null);
     } else {
-      const newTask: Task = {
-        id: Date.now().toString(),
+      appContext.addTask({
+        title: formData.title,
+        notes: formData.notes,
+        priority: formData.priority,
+        dueDate: formData.dueDate,
         completed: false,
-        ...formData,
-      };
-      setTasks([...tasks, newTask]);
+      });
     }
 
     setFormData({ title: '', notes: '', priority: 'medium', dueDate: '' });
@@ -96,28 +65,38 @@ export default function Tasks() {
   };
 
   const toggleTask = (id: string) => {
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
+    const task = appContext.tasks.find((t) => t.id === id);
+    if (task) {
+      appContext.updateTask(id, { 
+        completed: !task.completed,
+        completedAt: !task.completed ? Date.now() : undefined
+      });
+    }
   };
 
   const deleteTask = (id: string) => {
-    setTasks(tasks.filter((t) => t.id !== id));
+    appContext.deleteTask(id);
   };
 
-  const startEdit = (task: Task) => {
-    setEditingTask(task);
-    setFormData({
-      title: task.title,
-      notes: task.notes,
-      priority: task.priority,
-      dueDate: task.dueDate || '',
-    });
-    setShowAddDialog(true);
+  const startEdit = (id: string) => {
+    const task = appContext.tasks.find((t) => t.id === id);
+    if (task) {
+      setEditingTaskId(id);
+      setFormData({
+        title: task.title,
+        notes: task.notes,
+        priority: task.priority,
+        dueDate: task.dueDate || '',
+      });
+      setShowAddDialog(true);
+    }
   };
 
-  const todayTasks = tasks.filter((t) => !t.completed);
-  const completedTasks = tasks.filter((t) => t.completed);
+  const todayTasks = appContext.getTodayTasks();
+  const completedTasks = appContext.getCompletedTasks();
+  const allTasks = appContext.tasks;
 
-  const TaskItem = ({ task }: { task: Task }) => (
+  const TaskItem = ({ task }: { task: any }) => (
     <Card className="p-4 glass hover-lift border-border/50">
       <div className="flex items-start gap-3">
         <button onClick={() => toggleTask(task.id)} className="mt-1">
@@ -165,7 +144,7 @@ export default function Tasks() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => startEdit(task)}
+            onClick={() => startEdit(task.id)}
             className="h-8 w-8"
           >
             <Edit className="h-4 w-4" />
@@ -211,7 +190,7 @@ export default function Tasks() {
           <h1 className="text-3xl font-bold">{t('tasks.title')}</h1>
           <Button
             onClick={() => {
-              setEditingTask(null);
+              setEditingTaskId(null);
               setFormData({ title: '', notes: '', priority: 'medium', dueDate: '' });
               setShowAddDialog(true);
             }}
@@ -240,9 +219,13 @@ export default function Tasks() {
           </TabsContent>
 
           <TabsContent value="all" className="space-y-4">
-            {tasks.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
+            {allTasks.length === 0 ? (
+              <Card className="p-12 glass text-center">
+                <p className="text-muted-foreground">No tasks yet. Create one to get started!</p>
+              </Card>
+            ) : (
+              allTasks.map((task) => <TaskItem key={task.id} task={task} />)
+            )}
           </TabsContent>
 
           <TabsContent value="completed" className="space-y-4">
@@ -262,7 +245,7 @@ export default function Tasks() {
         <DialogContent className="glass border-primary/20">
           <DialogHeader>
             <DialogTitle>
-              {editingTask ? t('tasks.edit') : t('tasks.addNew')}
+              {editingTaskId ? t('tasks.edit') : t('tasks.addNew')}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -281,7 +264,7 @@ export default function Tasks() {
               <Label htmlFor="priority">{t('tasks.priority')}</Label>
               <Select
                 value={formData.priority}
-                onValueChange={(value: Task['priority']) =>
+                onValueChange={(value: 'high' | 'medium' | 'low') =>
                   setFormData({ ...formData, priority: value })
                 }
               >
@@ -323,7 +306,7 @@ export default function Tasks() {
                 variant="ghost"
                 onClick={() => {
                   setShowAddDialog(false);
-                  setEditingTask(null);
+                  setEditingTaskId(null);
                 }}
               >
                 {t('tasks.cancel')}

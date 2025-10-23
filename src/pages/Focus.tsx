@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useAppContext } from '@/context/AppDataContext';
 import {
   Zap,
   Play,
@@ -20,6 +21,7 @@ import {
 
 export default function Focus() {
   const { t } = useTranslation();
+  const appContext = useAppContext();
   const [workDuration, setWorkDuration] = useState(25);
   const [breakDuration, setBreakDuration] = useState(5);
   const [timeLeft, setTimeLeft] = useState(workDuration * 60);
@@ -27,10 +29,15 @@ export default function Focus() {
   const [isBreak, setIsBreak] = useState(false);
   const [showBreathingExercise, setShowBreathingExercise] = useState(false);
   const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
+  const [sessionsCompleted, setSessionsCompleted] = useState(0);
+  const [breathingExercisesCompleted, setBreathingExercisesCompleted] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const accumulatedMinutesRef = useRef<number>(0);
 
   useEffect(() => {
     if (isRunning) {
+      startTimeRef.current = Date.now();
       intervalRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -52,9 +59,17 @@ export default function Focus() {
   const handleSessionComplete = () => {
     setIsRunning(false);
     if (!isBreak) {
+      // Work session completed
+      const sessionMinutes = (Date.now() - startTimeRef.current) / 60000;
+      accumulatedMinutesRef.current += workDuration; // Use configured duration, not actual
+      appContext.recordFocusSession(workDuration);
+      setSessionsCompleted((prev) => prev + 1);
+
+      // Switch to break
       setIsBreak(true);
       setTimeLeft(breakDuration * 60);
     } else {
+      // Break completed
       setIsBreak(false);
       setTimeLeft(workDuration * 60);
     }
@@ -72,6 +87,7 @@ export default function Focus() {
     setIsRunning(false);
     setIsBreak(false);
     setTimeLeft(workDuration * 60);
+    setSessionsCompleted(0);
   };
 
   const formatTime = (seconds: number) => {
@@ -99,6 +115,14 @@ export default function Focus() {
       return () => clearInterval(breathingInterval);
     }
   }, [showBreathingExercise, breathingPhase]);
+
+  const handleBreathingClose = () => {
+    setShowBreathingExercise(false);
+    if (breathingExercisesCompleted < 10) {
+      setBreathingExercisesCompleted((prev) => prev + 1);
+      appContext.awardXP(5); // Award XP for completing breathing exercise
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -161,14 +185,14 @@ export default function Focus() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <div className="text-6xl font-bold mb-2">{formatTime(timeLeft)}</div>
                   <Badge variant={isBreak ? 'secondary' : 'default'} className="text-sm">
-                    {isBreak ? 'Break Time' : 'Focus Time'}
+                    {isBreak ? 'Break Time ☕' : 'Focus Time 🎯'}
                   </Badge>
                 </div>
               </div>
             </div>
 
             {/* Controls */}
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center flex-wrap">
               {!isRunning ? (
                 <Button
                   size="lg"
@@ -189,6 +213,18 @@ export default function Focus() {
                 Reset
               </Button>
             </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="p-3 rounded-lg bg-card/50 border border-border">
+                <p className="text-xs text-muted-foreground">Sessions Today</p>
+                <p className="text-2xl font-bold">{sessionsCompleted}</p>
+              </div>
+              <div className="p-3 rounded-lg bg-card/50 border border-border">
+                <p className="text-xs text-muted-foreground">Total Focus Time</p>
+                <p className="text-2xl font-bold">{appContext.userProgress.focusMinutes}m</p>
+              </div>
+            </div>
           </Card>
 
           {/* Settings */}
@@ -198,9 +234,10 @@ export default function Focus() {
               <Select
                 value={workDuration.toString()}
                 onValueChange={(value) => {
-                  setWorkDuration(parseInt(value));
+                  const newDuration = parseInt(value);
+                  setWorkDuration(newDuration);
                   if (!isRunning && !isBreak) {
-                    setTimeLeft(parseInt(value) * 60);
+                    setTimeLeft(newDuration * 60);
                   }
                 }}
               >
@@ -260,7 +297,7 @@ export default function Focus() {
       {/* Breathing Exercise Modal */}
       <Dialog open={showBreathingExercise} onOpenChange={setShowBreathingExercise}>
         <DialogContent className="sm:max-w-md glass border-primary/20 p-0 overflow-hidden">
-          <div className="p-12 text-center space-y-8">
+          <div className="flex flex-col items-center justify-center min-h-screen sm:min-h-auto py-12 px-4 sm:p-12 text-center space-y-12 sm:space-y-8">
             <div className="relative">
               <div
                 className={`w-40 h-40 mx-auto rounded-full bg-gradient-primary transition-all duration-1000 ${
@@ -273,9 +310,9 @@ export default function Focus() {
               />
             </div>
 
-            <div>
-              <h2 className="text-4xl font-bold mb-2 capitalize">{breathingPhase}</h2>
-              <p className="text-muted-foreground">
+            <div className="space-y-4">
+              <h2 className="text-4xl font-bold capitalize">{breathingPhase}</h2>
+              <p className="text-lg text-muted-foreground max-w-sm mx-auto">
                 {breathingPhase === 'inhale' && 'Breathe in slowly through your nose...'}
                 {breathingPhase === 'hold' && 'Hold your breath gently...'}
                 {breathingPhase === 'exhale' && 'Exhale slowly through your mouth...'}
@@ -283,9 +320,9 @@ export default function Focus() {
             </div>
 
             <Button
-              onClick={() => setShowBreathingExercise(false)}
+              onClick={handleBreathingClose}
               variant="outline"
-              className="w-full"
+              className="w-full sm:w-auto mt-8 sm:mt-0"
             >
               Close
             </Button>

@@ -57,9 +57,6 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher />
             <Link to="/dashboard">
-              <Button variant="ghost">{t('nav.signIn')}</Button>
-            </Link>
-            <Link to="/dashboard">
               <Button className="bg-gradient-primary glow-primary">
                 {t('nav.getStarted')}
               </Button>
@@ -98,11 +95,6 @@ export const Navbar = () => {
               </Link>
             ))}
             <div className="pt-4 space-y-2">
-              <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-                <Button variant="ghost" className="w-full">
-                  {t('nav.signIn')}
-                </Button>
-              </Link>
               <Link to="/dashboard" onClick={() => setIsOpen(false)}>
                 <Button className="w-full bg-gradient-primary glow-primary">
                   {t('nav.getStarted')}
