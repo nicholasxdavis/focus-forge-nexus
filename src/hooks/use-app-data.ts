@@ -72,6 +72,14 @@ export interface UserSettings {
 }
 
 const STORAGE_KEY = 'betterfocus_data';
+const DEFAULT_SETTINGS: UserSettings = {
+  theme: 'auto',
+  soundEnabled: true,
+  notificationsEnabled: true,
+  defaultFocusDuration: 25,
+  defaultBreakDuration: 5,
+  language: 'en',
+};
 
 const DEFAULT_USER_PROGRESS: UserProgress = {
   level: 1,
