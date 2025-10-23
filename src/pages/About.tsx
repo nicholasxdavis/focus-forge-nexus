@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Heart, Target, Users, Lightbulb } from 'lucide-react';
 import AOS from 'aos';
 
@@ -87,13 +89,58 @@ export default function About() {
             </div>
           </div>
 
-          <Card data-aos="zoom-in" className="p-8 glass bg-gradient-glow border-primary/20 text-center">
-            <h2 className="text-3xl font-bold mb-4">Join Our Journey</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              We're just getting started. Join 50,000+ ADHD minds who've found their flow with BetterFocus. Your
-              feedback shapes every update we ship.
-            </p>
-          </Card>
+          <div className="space-y-8">
+            <Card data-aos="zoom-in" className="p-8 glass bg-gradient-glow border-primary/20 text-center">
+              <h2 className="text-3xl font-bold mb-4">Join Our Journey</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+                We're just getting started. Join 50,000+ ADHD minds who've found their flow with BetterFocus. Your
+                feedback shapes every update we ship.
+              </p>
+              <Link to="/dashboard">
+                <Button size="lg" className="bg-gradient-primary glow-primary">
+                  Get Started Free
+                </Button>
+              </Link>
+            </Card>
+
+            <Card data-aos="fade-up" className="p-8 glass border-border/50">
+              <h2 className="text-2xl font-bold mb-4 text-center">Our Commitment to You</h2>
+              <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    <span className="text-primary">✓</span> Always Free
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    BetterFocus will always be 100% free. No paywalls, no premium tiers, no tricks.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    <span className="text-primary">✓</span> Privacy First
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Your data is yours. We don't sell it, rent it, or share it. Period.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    <span className="text-primary">✓</span> Constantly Improving
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Weekly updates based on your feedback. We're building this together.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    <span className="text-primary">✓</span> Built for You
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Every feature is designed with ADHD brains in mind, not against them.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
         </div>
       </section>
 

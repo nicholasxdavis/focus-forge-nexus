@@ -79,8 +79,11 @@ export default function Contact() {
         <div className="container mx-auto max-w-6xl">
           <div data-aos="fade-up" className="text-center mb-16">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">Get in Touch</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
               Have questions? Feedback? Just want to say hi? We'd love to hear from you.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              We typically respond within 24 hours. Your voice matters to us! 💚
             </p>
           </div>
 

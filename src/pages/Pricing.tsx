@@ -15,58 +15,19 @@ export default function Pricing() {
     AOS.init({ duration: 800, once: true });
   }, []);
 
-  const plans = [
-    {
-      name: 'Free',
-      price: '$0',
-      period: 'forever',
-      description: 'Perfect to get started',
-      features: [
-        'Quick task capture',
-        'Basic focus timer (25 min)',
-        'Up to 20 tasks',
-        'Daily achievements',
-        'Mobile & desktop',
-      ],
-      cta: t('nav.getStarted'),
-      popular: false,
-    },
-    {
-      name: 'Pro',
-      price: '$8',
-      period: 'per month',
-      description: 'For serious focus warriors',
-      features: [
-        'Everything in Free',
-        'Unlimited tasks',
-        'Custom timer lengths',
-        'Advanced gamification',
-        'Mindfulness exercises',
-        'Body doubling sessions',
-        'Detailed analytics',
-        'Priority support',
-      ],
-      cta: 'Start Free Trial',
-      popular: true,
-    },
-    {
-      name: 'Team',
-      price: '$15',
-      period: 'per user/month',
-      description: 'For groups and families',
-      features: [
-        'Everything in Pro',
-        'Shared workspaces',
-        'Team accountability',
-        'Admin dashboard',
-        'Group focus sessions',
-        'Family progress tracking',
-        'Bulk billing',
-        'Dedicated support',
-      ],
-      cta: 'Contact Sales',
-      popular: false,
-    },
+  const features = [
+    'Unlimited tasks & projects',
+    'Visual focus timer (Pomodoro)',
+    'Task capture (voice & text)',
+    'Gamification (XP, levels, streaks)',
+    'Mindfulness & breathing exercises',
+    'Body doubling sessions',
+    'Detailed analytics & progress tracking',
+    'ADHD-friendly interface',
+    'Mobile & desktop access',
+    'Smart reminders',
+    'Flexible organization system',
+    'All future updates',
   ];
 
   return (
@@ -77,71 +38,78 @@ export default function Pricing() {
         <div className="container mx-auto max-w-6xl">
           <div data-aos="fade-up" className="text-center mb-16">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Simple, Transparent {t('nav.pricing')}
+              100% Free. Forever. 💚
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Choose the plan that works for your brain. Cancel anytime, no questions asked.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              BetterFocus is completely free for everyone. We believe productivity tools for ADHD brains should be accessible to all. No tricks, no trials, no credit card required.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {plans.map((plan, index) => (
-              <Card
-                key={index}
-                data-aos="fade-up"
-                data-aos-delay={index * 100}
-                className={`p-8 glass relative ${
-                  plan.popular
-                    ? 'border-primary/50 shadow-[0_0_30px_rgba(13,213,200,0.15)]'
-                    : 'border-border/50'
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-primary text-background text-sm font-semibold px-4 py-1 rounded-full">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
+          <Card
+            data-aos="fade-up"
+            className="max-w-2xl mx-auto p-10 glass border-primary/30 shadow-[0_0_30px_rgba(13,213,200,0.15)]"
+          >
+            <div className="text-center mb-8">
+              <div className="mb-6">
+                <span className="text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                  $0
+                </span>
+                <span className="text-2xl text-muted-foreground ml-3">forever</span>
+              </div>
+              <p className="text-lg text-muted-foreground mb-2">
+                Every feature. No limitations. No hidden fees.
+              </p>
+              <p className="text-sm text-primary font-medium">
+                ✨ Full access to everything BetterFocus offers
+              </p>
+            </div>
 
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
-                  <div className="mb-2">
-                    <span className="text-5xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground ml-2">/ {plan.period}</span>
-                  </div>
+            <div className="grid sm:grid-cols-2 gap-3 mb-8">
+              {features.map((feature, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span className="text-sm">{feature}</span>
                 </div>
+              ))}
+            </div>
 
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+            <Link to="/dashboard">
+              <Button size="lg" className="w-full bg-gradient-primary glow-primary text-lg py-6">
+                {t('nav.getStarted')} - It's Free!
+              </Button>
+            </Link>
+          </Card>
 
-                <Link to="/dashboard">
-                  <Button
-                    className={`w-full ${
-                      plan.popular
-                        ? 'bg-gradient-primary glow-primary'
-                        : ''
-                    }`}
-                    variant={plan.popular ? 'default' : 'outline'}
-                  >
-                    {plan.cta}
-                  </Button>
-                </Link>
-              </Card>
-            ))}
-          </div>
+          <div data-aos="fade-up" className="mt-16 text-center space-y-8">
+            <Card className="max-w-2xl mx-auto p-8 glass bg-gradient-glow border-primary/20">
+              <h2 className="text-2xl font-bold mb-4">Love BetterFocus? ☕</h2>
+              <p className="text-muted-foreground mb-6">
+                If BetterFocus helps you thrive, consider buying us a coffee! Your support helps us keep the app free and constantly improving for the ADHD community.
+              </p>
+              <a 
+                href="https://buymeacoffee.com/galore" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Button size="lg" variant="outline" className="border-primary/30 hover:border-primary hover-lift">
+                  ☕ Support Us on Buy Me a Coffee
+                </Button>
+              </a>
+              <p className="text-xs text-muted-foreground mt-4">
+                100% optional. BetterFocus stays free regardless.
+              </p>
+            </Card>
 
-          <div data-aos="fade-up" className="mt-16 text-center">
-            <p className="text-muted-foreground mb-4">
-              All plans include a 14-day free trial. No credit card required to start.
-            </p>
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-xl font-semibold mb-4">Why is BetterFocus free?</h3>
+              <p className="text-muted-foreground mb-4">
+                We built BetterFocus because we experienced the struggle of living with ADHD firsthand. We know that the people who need productivity tools the most often can't afford expensive subscriptions.
+              </p>
+              <p className="text-muted-foreground">
+                Our mission is simple: make ADHD-friendly productivity accessible to everyone, everywhere. Your success is our reward. ❤️
+              </p>
+            </div>
+
             <p className="text-sm text-muted-foreground">
               Questions? <Link to="/contact" className="text-primary hover:underline">Contact us</Link>
             </p>

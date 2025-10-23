@@ -95,9 +95,16 @@ export default function Blog() {
         <div className="container mx-auto max-w-6xl">
           <div data-aos="fade-up" className="text-center mb-16">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">ADHD Productivity Blog</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
               Tips, research, and real talk about living and thriving with ADHD.
             </p>
+            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+              <span>📚 Evidence-based strategies</span>
+              <span>•</span>
+              <span>🧠 Neuroscience insights</span>
+              <span>•</span>
+              <span>💡 Real-world tips</span>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
