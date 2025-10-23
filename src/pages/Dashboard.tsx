@@ -212,6 +212,9 @@ export default function Dashboard() {
               <p className="text-muted-foreground">Let's make today productive.</p>
             </div>
 
+            {/* Smart Reminders */}
+            <SmartReminders />
+
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <TutorialTooltip
