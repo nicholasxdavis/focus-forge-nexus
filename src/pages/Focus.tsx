@@ -260,7 +260,7 @@ export default function Focus() {
       {/* Breathing Exercise Modal */}
       <Dialog open={showBreathingExercise} onOpenChange={setShowBreathingExercise}>
         <DialogContent className="sm:max-w-md glass border-primary/20 p-0 overflow-hidden">
-          <div className="p-12 text-center space-y-8">
+          <div className="flex flex-col items-center justify-center min-h-screen sm:min-h-auto py-12 px-4 sm:p-12 text-center space-y-12 sm:space-y-8">
             <div className="relative">
               <div
                 className={`w-40 h-40 mx-auto rounded-full bg-gradient-primary transition-all duration-1000 ${
@@ -273,9 +273,9 @@ export default function Focus() {
               />
             </div>
 
-            <div>
-              <h2 className="text-4xl font-bold mb-2 capitalize">{breathingPhase}</h2>
-              <p className="text-muted-foreground">
+            <div className="space-y-4">
+              <h2 className="text-4xl font-bold capitalize">{breathingPhase}</h2>
+              <p className="text-lg text-muted-foreground max-w-sm mx-auto">
                 {breathingPhase === 'inhale' && 'Breathe in slowly through your nose...'}
                 {breathingPhase === 'hold' && 'Hold your breath gently...'}
                 {breathingPhase === 'exhale' && 'Exhale slowly through your mouth...'}
@@ -285,7 +285,7 @@ export default function Focus() {
             <Button
               onClick={() => setShowBreathingExercise(false)}
               variant="outline"
-              className="w-full"
+              className="w-full sm:w-auto mt-8 sm:mt-0"
             >
               Close
             </Button>
