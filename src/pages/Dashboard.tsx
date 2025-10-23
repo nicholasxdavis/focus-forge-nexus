@@ -35,6 +35,7 @@ export default function Dashboard() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
   const [showRating, setShowRating] = useState(false);
+  const [showBodyDoubling, setShowBodyDoubling] = useState(false);
   const [newTask, setNewTask] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
