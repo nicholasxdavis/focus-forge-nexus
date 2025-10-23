@@ -12,6 +12,7 @@ import { RatingPopup } from '@/components/RatingPopup';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { BodyDoublingSession } from '@/components/BodyDoublingSession';
 import { SmartReminders } from '@/components/SmartReminders';
+import { HabitTracker } from '@/components/HabitTracker';
 import { useAppContext } from '@/context/AppDataContext';
 import {
   Zap,
@@ -27,6 +28,8 @@ import {
   Mic,
   Loader2,
   Users,
+  Settings,
+  Clock,
 } from 'lucide-react';
 
 export default function Dashboard() {
