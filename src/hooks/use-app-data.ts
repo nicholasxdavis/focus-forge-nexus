@@ -112,6 +112,9 @@ export const useAppData = () => {
   const [userProgress, setUserProgress] = useState<UserProgress>(DEFAULT_USER_PROGRESS);
   const [achievements, setAchievements] = useState<Achievement[]>(DEFAULT_ACHIEVEMENTS);
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
+  const [focusSessions, setFocusSessions] = useState<FocusSession[]>([]);
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load data from localStorage
