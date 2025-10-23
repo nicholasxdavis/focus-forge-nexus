@@ -95,7 +95,7 @@ const DEFAULT_USER_PROGRESS: UserProgress = {
 };
 
 const DEFAULT_ACHIEVEMENTS: Achievement[] = [
-  { id: 1, name: 'First Steps', desc: 'Complete your first task', unlocked: false, icon: '🎯' },
+  { id: 1, name: 'First Steps', desc: 'Complete your first task', unlocked: false, icon: '��' },
   { id: 2, name: 'Week Warrior', desc: '7-day streak', unlocked: false, icon: '🔥' },
   { id: 3, name: 'Focus Master', desc: '50+ focus sessions', unlocked: false, icon: '⏱️' },
   { id: 4, name: 'Task Champion', desc: 'Complete 100 tasks', unlocked: false, icon: '💯' },
@@ -127,6 +127,9 @@ export const useAppData = () => {
         setUserProgress(data.userProgress || DEFAULT_USER_PROGRESS);
         setAchievements(data.achievements || DEFAULT_ACHIEVEMENTS);
         setDailyStats(data.dailyStats || []);
+        setFocusSessions(data.focusSessions || []);
+        setHabits(data.habits || []);
+        setSettings(data.settings || DEFAULT_SETTINGS);
       } catch (e) {
         console.error('Failed to load data:', e);
       }
@@ -160,7 +163,30 @@ export const useAppData = () => {
           createdAt: Date.now() - 1800000,
         },
       ];
+      const sampleHabits: Habit[] = [
+        {
+          id: '1',
+          name: 'Morning Exercise',
+          description: 'Start your day with movement',
+          frequency: 'daily',
+          targetDays: 7,
+          createdAt: Date.now(),
+          completedDates: [],
+          color: 'bg-blue-500',
+        },
+        {
+          id: '2',
+          name: 'Read',
+          description: 'Read for at least 15 minutes',
+          frequency: 'daily',
+          targetDays: 7,
+          createdAt: Date.now(),
+          completedDates: [],
+          color: 'bg-purple-500',
+        },
+      ];
       setTasks(sampleTasks);
+      setHabits(sampleHabits);
       setUserProgress({ ...DEFAULT_USER_PROGRESS, tasksCompleted: 1, xp: 50, currentLevelXp: 50 });
     }
     setIsLoaded(true);
