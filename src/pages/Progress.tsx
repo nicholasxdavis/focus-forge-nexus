@@ -7,6 +7,7 @@ import { Progress as ProgressBar } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useAppContext } from '@/context/AppDataContext';
 import {
   Zap,
   Trophy,
@@ -25,40 +26,18 @@ import {
 
 export default function Progress() {
   const { t } = useTranslation();
+  const appContext = useAppContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [weeklyData, setWeeklyData] = useState<any[]>([]);
 
-  const [userData] = useState({
-    level: 3,
-    progress: 65,
-    streak: 7,
-    longestStreak: 12,
-    tasksCompleted: 48,
-    focusMinutes: 340,
-    achievements: [
-      { id: 1, name: 'First Steps', desc: 'Complete your first task', unlocked: true, icon: '🎯' },
-      { id: 2, name: 'Week Warrior', desc: '7-day streak', unlocked: true, icon: '🔥' },
-      { id: 3, name: 'Focus Master', desc: '50+ focus sessions', unlocked: false, icon: '⏱️' },
-      { id: 4, name: 'Task Champion', desc: 'Complete 100 tasks', unlocked: false, icon: '💯' },
-      { id: 5, name: 'Consistency King', desc: '30-day streak', unlocked: false, icon: '👑' },
-      { id: 6, name: 'Night Owl', desc: 'Complete task after 10pm', unlocked: false, icon: '🦉' },
-    ],
-    weeklyData: [
-      { day: 'Mon', tasks: 5, minutes: 45 },
-      { day: 'Tue', tasks: 8, minutes: 60 },
-      { day: 'Wed', tasks: 6, minutes: 50 },
-      { day: 'Thu', tasks: 9, minutes: 70 },
-      { day: 'Fri', tasks: 7, minutes: 55 },
-      { day: 'Sat', tasks: 4, minutes: 30 },
-      { day: 'Sun', tasks: 5, minutes: 35 },
-    ],
-    recentMilestones: [
-      { date: '2 days ago', text: 'Completed 7-day streak!', icon: '🔥' },
-      { date: '1 week ago', text: 'Reached Level 3', icon: '🎉' },
-    ],
-  });
+  useEffect(() => {
+    setWeeklyData(appContext.getWeeklyStats());
+  }, [appContext.dailyStats]);
 
-  const maxTasks = Math.max(...userData.weeklyData.map(d => d.tasks));
-  const maxMinutes = Math.max(...userData.weeklyData.map(d => d.minutes));
+  const maxTasks = Math.max(...weeklyData.map(d => d.tasks), 1);
+  const maxMinutes = Math.max(...weeklyData.map(d => d.minutes), 1);
+
+  const unlockedAchievements = appContext.achievements.filter(a => a.unlocked);
 
   return (
     <div className="min-h-screen bg-background">
@@ -115,7 +94,7 @@ export default function Progress() {
             <Link to="/progress">
               <Button variant="default" className="w-full justify-start bg-primary">
                 <Trophy className="mr-2 h-4 w-4" />
-                Progress
+                Your Progress
               </Button>
             </Link>
           </nav>
@@ -139,26 +118,28 @@ export default function Progress() {
                 <div className="w-28 h-28 rounded-full bg-gradient-primary flex items-center justify-center shrink-0">
                   <div className="text-center">
                     <Trophy className="h-10 w-10 text-background mx-auto mb-1" />
-                    <span className="text-3xl font-bold text-background">{userData.level}</span>
+                    <span className="text-3xl font-bold text-background">{appContext.userProgress.level}</span>
                   </div>
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-2xl font-bold mb-2">Level {userData.level}</h2>
+                  <h2 className="text-2xl font-bold mb-2">Level {appContext.userProgress.level}</h2>
                   <p className="text-muted-foreground mb-3">
-                    {100 - userData.progress}% until Level {userData.level + 1}
+                    {appContext.userProgress.maxLevelXp - appContext.userProgress.currentLevelXp} XP until Level {appContext.userProgress.level + 1}
                   </p>
-                  <ProgressBar value={userData.progress} className="h-2 mb-2" />
-                  <p className="text-sm text-muted-foreground">{userData.progress}% complete</p>
+                  <ProgressBar value={appContext.userProgress.currentLevelXp / appContext.userProgress.maxLevelXp * 100} className="h-2 mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    {Math.round((appContext.userProgress.currentLevelXp / appContext.userProgress.maxLevelXp) * 100)}% complete
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
                     <Flame className="h-5 w-5 text-primary mx-auto mb-1" />
-                    <p className="text-xl font-bold">{userData.streak}</p>
+                    <p className="text-xl font-bold">{appContext.userProgress.streak}</p>
                     <p className="text-xs text-muted-foreground">Days</p>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
                     <CheckCircle2 className="h-5 w-5 text-primary mx-auto mb-1" />
-                    <p className="text-xl font-bold">{userData.tasksCompleted}</p>
+                    <p className="text-xl font-bold">{appContext.userProgress.tasksCompleted}</p>
                     <p className="text-xs text-muted-foreground">Tasks</p>
                   </div>
                 </div>
@@ -172,8 +153,8 @@ export default function Progress() {
                   <span className="text-sm text-muted-foreground">Total Focus Time</span>
                   <Clock className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userData.focusMinutes}</p>
-                <p className="text-xs text-muted-foreground">minutes ({(userData.focusMinutes / 60).toFixed(1)} hours)</p>
+                <p className="text-3xl font-bold">{appContext.userProgress.focusMinutes}</p>
+                <p className="text-xs text-muted-foreground">minutes ({(appContext.userProgress.focusMinutes / 60).toFixed(1)} hours)</p>
               </Card>
 
               <Card className="p-6 glass hover-lift">
@@ -181,7 +162,7 @@ export default function Progress() {
                   <span className="text-sm text-muted-foreground">Longest Streak</span>
                   <Flame className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userData.longestStreak}</p>
+                <p className="text-3xl font-bold">{appContext.userProgress.longestStreak}</p>
                 <p className="text-xs text-muted-foreground">days in a row</p>
               </Card>
 
@@ -191,7 +172,7 @@ export default function Progress() {
                   <Award className="h-5 w-5 text-primary" />
                 </div>
                 <p className="text-3xl font-bold">
-                  {userData.achievements.filter(a => a.unlocked).length}/{userData.achievements.length}
+                  {unlockedAchievements.length}/{appContext.achievements.length}
                 </p>
                 <p className="text-xs text-muted-foreground">unlocked</p>
               </Card>
@@ -201,7 +182,7 @@ export default function Progress() {
                   <span className="text-sm text-muted-foreground">This Week</span>
                   <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userData.weeklyData.reduce((sum, d) => sum + d.tasks, 0)}</p>
+                <p className="text-3xl font-bold">{weeklyData.reduce((sum, d) => sum + d.tasks, 0)}</p>
                 <p className="text-xs text-muted-foreground">tasks completed</p>
               </Card>
             </div>
@@ -211,7 +192,7 @@ export default function Progress() {
               <TabsList className="grid w-full grid-cols-3 max-w-md">
                 <TabsTrigger value="week">This Week</TabsTrigger>
                 <TabsTrigger value="achievements">Achievements</TabsTrigger>
-                <TabsTrigger value="milestones">Milestones</TabsTrigger>
+                <TabsTrigger value="xp">XP & Levels</TabsTrigger>
               </TabsList>
 
               {/* This Week Tab */}
@@ -226,7 +207,7 @@ export default function Progress() {
                     <div>
                       <p className="text-sm font-medium mb-3 text-muted-foreground">Tasks Completed</p>
                       <div className="space-y-2">
-                        {userData.weeklyData.map((day, i) => (
+                        {weeklyData.map((day, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <span className="text-xs w-8 text-muted-foreground">{day.day}</span>
                             <div className="flex-1 h-8 bg-muted/30 rounded-lg overflow-hidden">
@@ -234,7 +215,7 @@ export default function Progress() {
                                 className="h-full bg-gradient-primary flex items-center justify-end pr-2 transition-all duration-500"
                                 style={{ width: `${(day.tasks / maxTasks) * 100}%` }}
                               >
-                                <span className="text-xs font-medium text-background">{day.tasks}</span>
+                                {day.tasks > 0 && <span className="text-xs font-medium text-background">{day.tasks}</span>}
                               </div>
                             </div>
                           </div>
@@ -246,7 +227,7 @@ export default function Progress() {
                     <div>
                       <p className="text-sm font-medium mb-3 text-muted-foreground">Focus Minutes</p>
                       <div className="space-y-2">
-                        {userData.weeklyData.map((day, i) => (
+                        {weeklyData.map((day, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <span className="text-xs w-8 text-muted-foreground">{day.day}</span>
                             <div className="flex-1 h-8 bg-muted/30 rounded-lg overflow-hidden">
@@ -254,7 +235,7 @@ export default function Progress() {
                                 className="h-full bg-primary/70 flex items-center justify-end pr-2 transition-all duration-500"
                                 style={{ width: `${(day.minutes / maxMinutes) * 100}%` }}
                               >
-                                <span className="text-xs font-medium text-background">{day.minutes}m</span>
+                                {day.minutes > 0 && <span className="text-xs font-medium text-background">{day.minutes}m</span>}
                               </div>
                             </div>
                           </div>
@@ -270,10 +251,10 @@ export default function Progress() {
                 <Card className="p-6 glass">
                   <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <Award className="h-5 w-5 text-primary" />
-                    Achievements ({userData.achievements.filter(a => a.unlocked).length}/{userData.achievements.length})
+                    Achievements ({unlockedAchievements.length}/{appContext.achievements.length})
                   </h3>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {userData.achievements.map((achievement) => (
+                    {appContext.achievements.map((achievement) => (
                       <Card
                         key={achievement.id}
                         className={`p-4 ${
@@ -299,26 +280,67 @@ export default function Progress() {
                 </Card>
               </TabsContent>
 
-              {/* Milestones Tab */}
-              <TabsContent value="milestones">
+              {/* XP & Levels Tab */}
+              <TabsContent value="xp">
                 <Card className="p-6 glass">
                   <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <Star className="h-5 w-5 text-primary" />
-                    Recent Milestones
+                    XP & Level Information
                   </h3>
-                  <div className="space-y-4">
-                    {userData.recentMilestones.map((milestone, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-4 p-4 rounded-lg bg-gradient-glow border border-primary/20 hover-lift"
-                      >
-                        <div className="text-3xl">{milestone.icon}</div>
-                        <div className="flex-1">
-                          <p className="font-medium">{milestone.text}</p>
-                          <p className="text-xs text-muted-foreground">{milestone.date}</p>
-                        </div>
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="p-4 rounded-lg bg-gradient-glow border border-primary/20">
+                        <p className="text-sm text-muted-foreground mb-2">Total XP Earned</p>
+                        <p className="text-4xl font-bold text-primary">{appContext.userProgress.xp}</p>
                       </div>
-                    ))}
+                      <div className="p-4 rounded-lg bg-gradient-glow border border-primary/20">
+                        <p className="text-sm text-muted-foreground mb-2">Current Level</p>
+                        <p className="text-4xl font-bold text-primary">{appContext.userProgress.level}</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold mb-4">How to Earn XP</h4>
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        <p>✓ Complete a task: +10-25 XP (based on priority)</p>
+                        <p>✓ Focus session: +5 XP per 5 minutes</p>
+                        <p>✓ Breathing exercise: +5 XP</p>
+                        <p>✓ Body doubling: +1 XP per 10 minutes</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold mb-4">Level Progression</h4>
+                      <div className="space-y-3">
+                        {Array.from({ length: 5 }).map((_, i) => {
+                          const level = i + 1;
+                          const isCurrentOrPast = level <= appContext.userProgress.level;
+                          return (
+                            <div key={i} className="flex items-center gap-3">
+                              <div
+                                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                                  isCurrentOrPast
+                                    ? 'bg-primary text-background'
+                                    : 'bg-muted/30 text-muted-foreground'
+                                }`}
+                              >
+                                {level}
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium">
+                                  Level {level} {level === appContext.userProgress.level && '(Current)'}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {level === appContext.userProgress.level
+                                    ? `${appContext.userProgress.maxLevelXp - appContext.userProgress.currentLevelXp} XP until next level`
+                                    : `${level * 100} total XP to reach`}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </Card>
               </TabsContent>
@@ -329,12 +351,12 @@ export default function Progress() {
               <Brain className="h-10 w-10 text-primary mx-auto mb-3" />
               <h2 className="text-2xl font-bold mb-2">You're Doing Great! 🚀</h2>
               <p className="text-muted-foreground mb-6">
-                Keep completing tasks and focus sessions to reach Level {userData.level + 1}
+                Keep completing tasks and focus sessions to reach Level {appContext.userProgress.level + 1}
               </p>
-              <Link to="/tasks">
+              <Link to="/dashboard">
                 <Button size="lg" className="bg-gradient-primary glow-primary">
                   <CheckCircle2 className="mr-2 h-5 w-5" />
-                  Continue Tasks
+                  Back to Dashboard
                 </Button>
               </Link>
             </Card>
