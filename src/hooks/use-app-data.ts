@@ -41,6 +41,36 @@ export interface DailyStats {
   sessionsCompleted: number;
 }
 
+export interface FocusSession {
+  id: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  type: 'work' | 'break';
+  completed: boolean;
+  notes?: string;
+}
+
+export interface Habit {
+  id: string;
+  name: string;
+  description: string;
+  frequency: 'daily' | 'weekly';
+  targetDays: number; // days per week
+  createdAt: number;
+  completedDates: string[]; // ISO date strings
+  color: string;
+}
+
+export interface UserSettings {
+  theme: 'light' | 'dark' | 'auto';
+  soundEnabled: boolean;
+  notificationsEnabled: boolean;
+  defaultFocusDuration: number;
+  defaultBreakDuration: number;
+  language: string;
+}
+
 const STORAGE_KEY = 'betterfocus_data';
 
 const DEFAULT_USER_PROGRESS: UserProgress = {
