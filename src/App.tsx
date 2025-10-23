@@ -38,11 +38,13 @@ const App = () => (
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/focus" element={<Focus />} />
-            <Route path="/progress" element={<Progress />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/focus" element={<Focus />} />
+          <Route path="/progress" element={<Progress />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/focus-history" element={<FocusHistory />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
