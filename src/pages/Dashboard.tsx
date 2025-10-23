@@ -367,6 +367,29 @@ export default function Dashboard() {
                 </Link>
               </Card>
             </TutorialTooltip>
+
+            {/* Body Doubling CTA */}
+            <Card
+              className="p-8 glass hover-lift cursor-pointer border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10"
+              onClick={() => setShowBodyDoubling(true)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-lg bg-gradient-primary flex items-center justify-center">
+                    <Users className="h-8 w-8 text-background" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2">Try Body Doubling</h3>
+                    <p className="text-muted-foreground max-w-md">
+                      Work alongside virtual co-workers. Perfect for ADHD brains that need that little push to stay focused.
+                    </p>
+                  </div>
+                </div>
+                <Button size="lg" variant="default" className="bg-gradient-primary glow-primary shrink-0">
+                  Start
+                </Button>
+              </div>
+            </Card>
           </div>
         </main>
       </div>
