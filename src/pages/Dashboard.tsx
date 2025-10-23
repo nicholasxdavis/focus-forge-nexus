@@ -11,6 +11,7 @@ import { TutorialTooltip } from '@/components/TutorialTooltip';
 import { RatingPopup } from '@/components/RatingPopup';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { BodyDoublingSession } from '@/components/BodyDoublingSession';
+import { SmartReminders } from '@/components/SmartReminders';
 import { useAppContext } from '@/context/AppDataContext';
 import {
   Zap,
