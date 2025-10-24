@@ -11,6 +11,7 @@ import { OnboardingFlow } from '@/components/OnboardingFlow';
 import { TutorialTooltip } from '@/components/TutorialTooltip';
 import { RatingPopup } from '@/components/RatingPopup';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useToast } from '@/hooks/use-toast';
 import {
   getData,
   addTask as addTaskToStorage,
@@ -34,10 +35,12 @@ import {
   Heart,
   TrendingUp,
   Star,
+  Loader2,
 } from 'lucide-react';
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -46,6 +49,7 @@ export default function Dashboard() {
   const [newTask, setNewTask] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userStats, setUserStats] = useState(getData().userStats);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Load data from localStorage
@@ -91,23 +95,52 @@ export default function Dashboard() {
   };
 
   const handleAddTask = () => {
-    if (!newTask.trim()) return;
-    addTaskToStorage({
-      title: newTask,
-      notes: '',
-      completed: false,
-      priority: 'medium',
-    });
-    setTasks(getTasks());
-    setNewTask('');
+    if (!newTask.trim()) {
+      toast({
+        title: t('errors.taskNameRequired'),
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      addTaskToStorage({
+        title: newTask,
+        notes: '',
+        completed: false,
+        priority: 'medium',
+      });
+      setTasks(getTasks());
+      setNewTask('');
+      toast({
+        title: t('notifications.taskAdded'),
+        description: newTask,
+      });
+    } catch (error) {
+      toast({
+        title: t('errors.generic'),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleTask = (id: string) => {
     const task = tasks.find(t => t.id === id);
     if (task) {
+      const wasCompleted = task.completed;
       updateTask(id, { completed: !task.completed });
       setTasks(getTasks());
       setUserStats(getData().userStats);
+      
+      if (!wasCompleted) {
+        toast({
+          title: t('notifications.taskCompleted'),
+          description: task.title,
+        });
+      }
     }
   };
 
@@ -129,8 +162,9 @@ export default function Dashboard() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="md:hidden transition-all duration-200"
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label="Toggle sidebar"
             >
               {sidebarOpen ? <X /> : <Menu />}
             </Button>
@@ -155,25 +189,25 @@ export default function Dashboard() {
         >
           <nav className="p-4 space-y-2">
             <Link to="/dashboard">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start transition-all duration-200">
                 <Target className="mr-2 h-4 w-4" />
                 {t('nav.dashboard')}
               </Button>
             </Link>
             <Link to="/tasks">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start transition-all duration-200">
                 <CheckCircle2 className="mr-2 h-4 w-4" />
                 Tasks
               </Button>
             </Link>
             <Link to="/focus">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start transition-all duration-200">
                 <Timer className="mr-2 h-4 w-4" />
                 Focus Mode
               </Button>
             </Link>
             <Link to="/progress">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start transition-all duration-200">
                 <Trophy className="mr-2 h-4 w-4" />
                 Progress
               </Button>
@@ -192,7 +226,6 @@ export default function Dashboard() {
               <p className="text-muted-foreground">Let's make today productive.</p>
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <TutorialTooltip
                 isActive={showTutorial && tutorialStep === 3}
@@ -200,7 +233,7 @@ export default function Dashboard() {
                 position="bottom"
                 onNext={handleTutorialNext}
               >
-                <Card className="p-6 glass hover-lift">
+                <Card className="p-6 glass hover-lift transition-all duration-300 animate-fade-in">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-muted-foreground">{t('dashboard.yourStreak')}</span>
                     <Flame className="h-5 w-5 text-primary" />
@@ -210,7 +243,7 @@ export default function Dashboard() {
                 </Card>
               </TutorialTooltip>
 
-              <Card className="p-6 glass hover-lift">
+              <Card className="p-6 glass hover-lift transition-all duration-300 animate-fade-in">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">{t('dashboard.level')}</span>
                   <Trophy className="h-5 w-5 text-primary" />
@@ -220,7 +253,7 @@ export default function Dashboard() {
                 <p className="text-xs text-muted-foreground mt-1">{userStats.progress}% to next level</p>
               </Card>
 
-              <Card className="p-6 glass hover-lift">
+              <Card className="p-6 glass hover-lift transition-all duration-300 animate-fade-in">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">{t('dashboard.focusTime')}</span>
                   <Timer className="h-5 w-5 text-primary" />
@@ -229,7 +262,7 @@ export default function Dashboard() {
                 <p className="text-xs text-muted-foreground">{t('dashboard.minutes')}</p>
               </Card>
 
-              <Card className="p-6 glass hover-lift">
+              <Card className="p-6 glass hover-lift transition-all duration-300 animate-fade-in">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">Tasks Done</span>
                   <CheckCircle2 className="h-5 w-5 text-primary" />
@@ -255,8 +288,16 @@ export default function Dashboard() {
                     placeholder={t('dashboard.quickAdd')}
                     className="flex-1 bg-background/50"
                   />
-                  <Button onClick={handleAddTask} className="bg-gradient-primary glow-primary">
-                    <Plus className="h-4 w-4 mr-2" />
+                  <Button 
+                    onClick={handleAddTask} 
+                    disabled={isLoading}
+                    className="bg-gradient-primary glow-primary transition-all duration-200"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Plus className="h-4 w-4 mr-2" />
+                    )}
                     {t('dashboard.addTask')}
                   </Button>
                 </div>
@@ -266,29 +307,29 @@ export default function Dashboard() {
             {/* Main Dashboard Tabs */}
             <Tabs defaultValue="overview" className="w-full">
               <TabsList className="grid w-full grid-cols-6 mb-6">
-                <TabsTrigger value="overview">
+                <TabsTrigger value="overview" className="transition-all duration-200">
                   <Target className="h-4 w-4 mr-2" />
-                  Overview
+                  <span className="hidden sm:inline">Overview</span>
                 </TabsTrigger>
-                <TabsTrigger value="tasks">
+                <TabsTrigger value="tasks" className="transition-all duration-200">
                   <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Tasks
+                  <span className="hidden sm:inline">Tasks</span>
                 </TabsTrigger>
-                <TabsTrigger value="calendar">
+                <TabsTrigger value="calendar" className="transition-all duration-200">
                   <Calendar className="h-4 w-4 mr-2" />
-                  Calendar
+                  <span className="hidden sm:inline">Calendar</span>
                 </TabsTrigger>
-                <TabsTrigger value="wellness">
+                <TabsTrigger value="wellness" className="transition-all duration-200">
                   <Heart className="h-4 w-4 mr-2" />
-                  Wellness
+                  <span className="hidden sm:inline">Wellness</span>
                 </TabsTrigger>
-                <TabsTrigger value="insights">
+                <TabsTrigger value="insights" className="transition-all duration-200">
                   <Brain className="h-4 w-4 mr-2" />
-                  Insights
+                  <span className="hidden sm:inline">Insights</span>
                 </TabsTrigger>
-                <TabsTrigger value="goals">
+                <TabsTrigger value="goals" className="transition-all duration-200">
                   <Star className="h-4 w-4 mr-2" />
-                  Goals
+                  <span className="hidden sm:inline">Goals</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -302,15 +343,15 @@ export default function Dashboard() {
                 >
                   <Card className="p-6 glass">
                     <h2 className="text-2xl font-bold mb-4">{t('dashboard.todayTasks')}</h2>
-                    {tasks.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-8">{t('dashboard.noTasks')}</p>
-                    ) : (
+                  {tasks.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-8 animate-fade-in">{t('dashboard.noTasks')}</p>
+                  ) : (
                       <div className="space-y-2">
                         {tasks.slice(0, 5).map((task) => (
                           <div
                             key={task.id}
                             onClick={() => toggleTask(task.id)}
-                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group"
+                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-all duration-200 group animate-fade-in"
                           >
                             {task.completed ? (
                               <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
@@ -356,10 +397,13 @@ export default function Dashboard() {
                 <Card className="p-6 glass">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-2xl font-bold">All Tasks</h2>
-                    <Badge variant="outline">{tasks.length} total</Badge>
+                    <Badge variant="outline" className="animate-fade-in">{tasks.length} total</Badge>
                   </div>
                   {tasks.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">No tasks yet. Add your first one!</p>
+                    <div className="text-center py-8 animate-fade-in">
+                      <CheckCircle2 className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                      <p className="text-muted-foreground">No tasks yet. Add your first one!</p>
+                    </div>
                   ) : (
                     <div className="space-y-2">
                       {tasks.map((task) => (
@@ -432,14 +476,15 @@ export default function Dashboard() {
                       <h2 className="text-xl font-bold">Daily Mood</h2>
                     </div>
                     <div className="grid grid-cols-5 gap-2">
-                      {['😊', '🙂', '😐', '😔', '😢'].map((emoji, idx) => (
-                        <button
-                          key={idx}
-                          className="text-4xl p-4 rounded-lg hover:bg-muted/50 transition-colors"
-                        >
-                          {emoji}
-                        </button>
-                      ))}
+                    {['😊', '🙂', '😐', '😔', '😢'].map((emoji, idx) => (
+                      <button
+                        key={idx}
+                        className="text-4xl p-4 rounded-lg hover:bg-muted/50 transition-all duration-200 hover:scale-110"
+                        aria-label={`Mood ${idx + 1}`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
                     </div>
                   </Card>
 
@@ -459,10 +504,14 @@ export default function Dashboard() {
                   <h2 className="text-xl font-bold mb-4">Breathing Exercises</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {['Box Breathing', 'Deep Breathing', '4-7-8 Technique'].map((exercise) => (
-                      <div key={exercise} className="p-4 rounded-lg bg-muted/30 hover:bg-muted/50 cursor-pointer transition-colors">
+                      <button
+                        key={exercise}
+                        className="p-4 rounded-lg bg-muted/30 hover:bg-muted/50 cursor-pointer transition-all duration-200 hover:scale-105 text-left"
+                        onClick={() => toast({ title: `Starting ${exercise}` })}
+                      >
                         <div className="font-medium mb-2">{exercise}</div>
                         <div className="text-sm text-muted-foreground">2 min session</div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </Card>

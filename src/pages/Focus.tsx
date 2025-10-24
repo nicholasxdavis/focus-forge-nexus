@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useToast } from '@/hooks/use-toast';
 import {
   getData,
   addFocusSession,
@@ -27,6 +28,7 @@ import {
 
 export default function Focus() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const settings = getSettings();
   const [workDuration, setWorkDuration] = useState(settings.workDuration);
   const [breakDuration, setBreakDuration] = useState(settings.shortBreak);
@@ -73,6 +75,11 @@ export default function Focus() {
       });
 
       sessionStartTimeRef.current = null;
+      
+      toast({
+        title: t('notifications.sessionComplete'),
+        description: `${workDuration} minutes of focused work! 🎉`,
+      });
     }
 
     if (!isBreak) {
@@ -160,7 +167,7 @@ export default function Focus() {
           </div>
 
           {/* Timer Display */}
-          <Card className="p-12 glass text-center space-y-6">
+          <Card className="p-12 glass text-center space-y-6 animate-scale-in">
             <div className="relative">
               {/* Circular progress */}
               <div className="relative w-64 h-64 mx-auto">
@@ -201,7 +208,7 @@ export default function Focus() {
                 <Button
                   size="lg"
                   onClick={handleStart}
-                  className="bg-gradient-primary glow-primary px-8"
+                  className="bg-gradient-primary glow-primary px-8 transition-all duration-200 hover:scale-105"
                 >
                   <Play className="h-5 w-5 mr-2" fill="currentColor" />
                   {t('focus.startSession')}
@@ -272,7 +279,7 @@ export default function Focus() {
 
           {/* Breathing Exercise CTA */}
           <Card
-            className="p-6 glass hover-lift cursor-pointer"
+            className="p-6 glass hover-lift cursor-pointer transition-all duration-300 animate-fade-in"
             onClick={() => setShowBreathingExercise(true)}
           >
             <div className="flex items-center justify-between">
@@ -293,17 +300,18 @@ export default function Focus() {
 
       {/* Breathing Exercise Modal */}
       <Dialog open={showBreathingExercise} onOpenChange={setShowBreathingExercise}>
-        <DialogContent className="sm:max-w-md glass border-primary/20 p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-md glass border-primary/20 p-0 overflow-hidden animate-scale-in">
           <div className="p-12 text-center space-y-8">
             <div className="relative">
               <div
-                className={`w-40 h-40 mx-auto rounded-full bg-gradient-primary transition-all duration-1000 ${
+                className={`w-40 h-40 mx-auto rounded-full bg-gradient-primary transition-all duration-1000 ease-in-out ${
                   breathingPhase === 'inhale'
-                    ? 'scale-150 opacity-80'
+                    ? 'scale-150 opacity-80 shadow-2xl'
                     : breathingPhase === 'hold'
-                    ? 'scale-150 opacity-100'
+                    ? 'scale-150 opacity-100 shadow-2xl'
                     : 'scale-100 opacity-60'
                 }`}
+                aria-label={`Breathing: ${breathingPhase}`}
               />
             </div>
 

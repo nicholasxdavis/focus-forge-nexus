@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useToast } from '@/hooks/use-toast';
 import {
   getData,
   addTask,
@@ -29,13 +30,16 @@ import {
   Menu,
   X,
   ArrowLeft,
+  Loader2,
 } from 'lucide-react';
 
 export default function Tasks() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     notes: '',
@@ -45,28 +49,52 @@ export default function Tasks() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    // Load tasks from localStorage
+    // Load tasks from localStorage with animation delay
     const data = getData();
     setTasks(data.tasks);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim()) return;
-
-    if (editingTask) {
-      updateTask(editingTask.id, formData);
-    } else {
-      addTask(formData);
+    if (!formData.title.trim()) {
+      toast({
+        title: t('errors.taskNameRequired'),
+        variant: 'destructive',
+      });
+      return;
     }
 
-    // Reload tasks
-    const data = getData();
-    setTasks(data.tasks);
+    setIsSubmitting(true);
+    try {
+      if (editingTask) {
+        updateTask(editingTask.id, formData);
+        toast({
+          title: t('notifications.taskUpdated'),
+          description: formData.title,
+        });
+      } else {
+        addTask(formData);
+        toast({
+          title: t('notifications.taskAdded'),
+          description: formData.title,
+        });
+      }
 
-    setFormData({ title: '', notes: '', priority: 'medium', completed: false });
-    setShowAddDialog(false);
-    setEditingTask(null);
+      // Reload tasks
+      const data = getData();
+      setTasks(data.tasks);
+
+      setFormData({ title: '', notes: '', priority: 'medium', completed: false });
+      setShowAddDialog(false);
+      setEditingTask(null);
+    } catch (error) {
+      toast({
+        title: t('errors.generic'),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleTask = (id: string) => {
@@ -79,9 +107,14 @@ export default function Tasks() {
   };
 
   const handleDeleteTask = (id: string) => {
+    const task = tasks.find(t => t.id === id);
     deleteTaskFromStorage(id);
     const data = getData();
     setTasks(data.tasks);
+    toast({
+      title: t('notifications.taskDeleted'),
+      description: task?.title,
+    });
   };
 
   const startEdit = (task: Task) => {
@@ -99,7 +132,7 @@ export default function Tasks() {
   const completedTasks = tasks.filter((t) => t.completed);
 
   const TaskItem = ({ task }: { task: Task }) => (
-    <Card className="p-4 glass hover-lift border-border/50">
+    <Card className="p-4 glass hover-lift border-border/50 animate-fade-in transition-all duration-200">
       <div className="flex items-start gap-3">
         <button onClick={() => toggleTask(task.id)} className="mt-1">
           {task.completed ? (
@@ -199,18 +232,23 @@ export default function Tasks() {
 
         <Tabs defaultValue="today" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="today">{t('tasks.today')}</TabsTrigger>
-            <TabsTrigger value="all">{t('tasks.all')}</TabsTrigger>
-            <TabsTrigger value="completed">{t('tasks.completed')}</TabsTrigger>
+            <TabsTrigger value="today" className="transition-all duration-200">{t('tasks.today')}</TabsTrigger>
+            <TabsTrigger value="all" className="transition-all duration-200">{t('tasks.all')}</TabsTrigger>
+            <TabsTrigger value="completed" className="transition-all duration-200">{t('tasks.completed')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="today" className="space-y-4">
             {todayTasks.length === 0 ? (
-              <Card className="p-12 glass text-center">
+              <Card className="p-12 glass text-center animate-fade-in">
+                <Circle className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                 <p className="text-muted-foreground">No active tasks. Take a break or add a new one!</p>
               </Card>
             ) : (
-              todayTasks.map((task) => <TaskItem key={task.id} task={task} />)
+              todayTasks.map((task, idx) => (
+                <div key={task.id} style={{ animationDelay: `${idx * 50}ms` }}>
+                  <TaskItem task={task} />
+                </div>
+              ))
             )}
           </TabsContent>
 
@@ -222,11 +260,16 @@ export default function Tasks() {
 
           <TabsContent value="completed" className="space-y-4">
             {completedTasks.length === 0 ? (
-              <Card className="p-12 glass text-center">
+              <Card className="p-12 glass text-center animate-fade-in">
+                <CheckCircle2 className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                 <p className="text-muted-foreground">No completed tasks yet. Get started!</p>
               </Card>
             ) : (
-              completedTasks.map((task) => <TaskItem key={task.id} task={task} />)
+              completedTasks.map((task, idx) => (
+                <div key={task.id} style={{ animationDelay: `${idx * 50}ms` }}>
+                  <TaskItem task={task} />
+                </div>
+              ))
             )}
           </TabsContent>
         </Tabs>
@@ -293,8 +336,19 @@ export default function Tasks() {
               >
                 {t('tasks.cancel')}
               </Button>
-              <Button type="submit" className="bg-gradient-primary">
-                {t('tasks.save')}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-gradient-primary transition-all duration-200"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {t('common.loading')}
+                  </>
+                ) : (
+                  t('tasks.save')
+                )}
               </Button>
             </div>
           </form>

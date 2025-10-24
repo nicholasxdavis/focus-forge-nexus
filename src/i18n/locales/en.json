@@ -135,5 +135,42 @@
     "rateUs": "Rate us on the store",
     "later": "Maybe Later",
     "never": "Don't ask again"
+  },
+  "progress": {
+    "title": "Your Progress",
+    "level": "Level",
+    "nextLevel": "to next level",
+    "streak": "Day Streak",
+    "totalTasks": "Total Tasks",
+    "focusTime": "Total Focus Time",
+    "achievements": "Achievements",
+    "unlocked": "Unlocked",
+    "weekActivity": "Weekly Activity",
+    "tasksCompleted": "Tasks Completed",
+    "focusMinutes": "Focus Minutes",
+    "milestones": "Milestones",
+    "continue": "Continue Tasks"
+  },
+  "notifications": {
+    "taskAdded": "Task added successfully!",
+    "taskUpdated": "Task updated!",
+    "taskDeleted": "Task deleted",
+    "taskCompleted": "Great job! Task completed 🎉",
+    "sessionComplete": "Focus session complete! Time for a break.",
+    "settingsSaved": "Settings saved"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "taskNameRequired": "Task name is required",
+    "loadingFailed": "Failed to load data"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm"
   }
 }
