@@ -33,19 +33,19 @@ export default function Progress() {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userStats, setUserStats] = useState<UserStats>(getData().userStats);
-  const [achievements, setAchievements] = useState<Achievement[]>(getData().achievements);
-  const [weeklyData, setWeeklyData] = useState<WeeklyData[]>(getData().weeklyData);
+  const [achievements, setAchievements] = useState<Achievement[]>(getData().userStats.achievements);
+  const [weeklyData, setWeeklyData] = useState<WeeklyData[]>(getData().userStats.weeklyData);
 
   useEffect(() => {
     // Load data from localStorage
     const data = getData();
     setUserStats(data.userStats);
-    setAchievements(data.achievements);
-    setWeeklyData(data.weeklyData);
+    setAchievements(data.userStats.achievements);
+    setWeeklyData(data.userStats.weeklyData);
   }, []);
 
   const maxTasks = Math.max(...weeklyData.map(d => d.tasks), 1);
-  const maxMinutes = Math.max(...weeklyData.map(d => d.minutes), 1);
+  const maxMinutes = Math.max(...weeklyData.map(d => d.focusMinutes), 1);
 
   return (
     <div className="min-h-screen bg-background">
@@ -126,7 +126,7 @@ export default function Progress() {
                 <div className="w-28 h-28 rounded-full bg-gradient-primary flex items-center justify-center shrink-0">
                   <div className="text-center">
                     <Trophy className="h-10 w-10 text-background mx-auto mb-1" />
-                    <span className="text-3xl font-bold text-background">{userData.level}</span>
+                    <span className="text-3xl font-bold text-background">{userStats.level}</span>
                   </div>
                 </div>
                 <div className="flex-1 text-center md:text-left">
@@ -165,10 +165,10 @@ export default function Progress() {
 
               <Card className="p-6 glass hover-lift">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">Longest Streak</span>
+                  <span className="text-sm text-muted-foreground">Current Streak</span>
                   <Flame className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userStats.longestStreak}</p>
+                <p className="text-3xl font-bold">{userStats.streak}</p>
                 <p className="text-xs text-muted-foreground">days in a row</p>
               </Card>
 
@@ -239,9 +239,9 @@ export default function Progress() {
                             <div className="flex-1 h-8 bg-muted/30 rounded-lg overflow-hidden">
                               <div
                                 className="h-full bg-primary/70 flex items-center justify-end pr-2 transition-all duration-500"
-                                style={{ width: `${(day.minutes / maxMinutes) * 100}%` }}
+                                style={{ width: `${(day.focusMinutes / maxMinutes) * 100}%` }}
                               >
-                                <span className="text-xs font-medium text-background">{day.minutes}m</span>
+                                <span className="text-xs font-medium text-background">{day.focusMinutes}m</span>
                               </div>
                             </div>
                           </div>
@@ -270,9 +270,9 @@ export default function Progress() {
                         }`}
                       >
                         <div className="text-center">
-                          <div className="text-4xl mb-2">{achievement.icon}</div>
-                          <h4 className="font-semibold mb-1">{achievement.name}</h4>
-                          <p className="text-xs text-muted-foreground">{achievement.desc}</p>
+                          <div className="text-4xl mb-2">🏆</div>
+                          <h4 className="font-semibold mb-1">{achievement.title}</h4>
+                          <p className="text-xs text-muted-foreground">{achievement.description}</p>
                           {achievement.unlocked && (
                             <Badge variant="secondary" className="mt-2 bg-primary/10 text-primary border-primary/20">
                               <CheckCircle2 className="h-3 w-3 mr-1" />

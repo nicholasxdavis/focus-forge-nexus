@@ -40,7 +40,7 @@ export default function Tasks() {
     title: '',
     notes: '',
     priority: 'medium' as Task['priority'],
-    dueDate: '',
+    completed: false,
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -64,7 +64,7 @@ export default function Tasks() {
     const data = getData();
     setTasks(data.tasks);
 
-    setFormData({ title: '', notes: '', priority: 'medium', dueDate: '' });
+    setFormData({ title: '', notes: '', priority: 'medium', completed: false });
     setShowAddDialog(false);
     setEditingTask(null);
   };
@@ -90,7 +90,7 @@ export default function Tasks() {
       title: task.title,
       notes: task.notes,
       priority: task.priority,
-      dueDate: task.dueDate || '',
+      completed: task.completed,
     });
     setShowAddDialog(true);
   };
@@ -123,22 +123,16 @@ export default function Tasks() {
           <div className="flex items-center gap-2 flex-wrap">
             <Badge
               variant={
-                task.priority === 'high'
-                  ? 'destructive'
-                  : task.priority === 'medium'
-                  ? 'default'
-                  : 'secondary'
-              }
-              className="text-xs"
-            >
-              {task.priority}
-            </Badge>
-            {task.dueDate && (
-              <Badge variant="outline" className="text-xs">
-                <Calendar className="h-3 w-3 mr-1" />
-                {new Date(task.dueDate).toLocaleDateString()}
-              </Badge>
-            )}
+              task.priority === 'high'
+                ? 'destructive'
+                : task.priority === 'medium'
+                ? 'default'
+                : 'secondary'
+            }
+            className="text-xs"
+          >
+            {task.priority}
+          </Badge>
           </div>
         </div>
 
@@ -193,7 +187,7 @@ export default function Tasks() {
           <Button
             onClick={() => {
               setEditingTask(null);
-              setFormData({ title: '', notes: '', priority: 'medium', dueDate: '' });
+              setFormData({ title: '', notes: '', priority: 'medium', completed: false });
               setShowAddDialog(true);
             }}
             className="bg-gradient-primary glow-primary"
@@ -275,16 +269,6 @@ export default function Tasks() {
                   <SelectItem value="low">{t('tasks.low')}</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="dueDate">{t('tasks.dueDate')}</Label>
-              <Input
-                id="dueDate"
-                type="date"
-                value={formData.dueDate}
-                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-              />
             </div>
 
             <div>

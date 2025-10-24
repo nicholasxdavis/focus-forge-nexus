@@ -29,7 +29,7 @@ export default function Focus() {
   const { t } = useTranslation();
   const settings = getSettings();
   const [workDuration, setWorkDuration] = useState(settings.workDuration);
-  const [breakDuration, setBreakDuration] = useState(settings.breakDuration);
+  const [breakDuration, setBreakDuration] = useState(settings.shortBreak);
   const [timeLeft, setTimeLeft] = useState(workDuration * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
@@ -62,16 +62,14 @@ export default function Focus() {
     setIsRunning(false);
 
     // Save the completed session
-    if (sessionStartTimeRef.current) {
+    if (sessionStartTimeRef.current && !isBreak) {
       const endTime = new Date().toISOString();
-      const duration = isBreak ? breakDuration : workDuration;
+      const duration = (workDuration * 60);
 
       addFocusSession({
         startTime: sessionStartTimeRef.current,
         endTime,
         duration,
-        type: isBreak ? 'break' : 'work',
-        completed: true,
       });
 
       sessionStartTimeRef.current = null;
@@ -256,7 +254,7 @@ export default function Focus() {
                 onValueChange={(value) => {
                   const newDuration = parseInt(value);
                   setBreakDuration(newDuration);
-                  updateSettings({ breakDuration: newDuration });
+                  updateSettings({ shortBreak: newDuration });
                 }}
               >
                 <SelectTrigger>
