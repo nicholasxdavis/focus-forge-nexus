@@ -9,6 +9,13 @@ import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import {
+  getData,
+  addFocusSession,
+  getSettings,
+  updateSettings,
+  type FocusSession
+} from '@/lib/storage';
+import {
   Zap,
   Play,
   Pause,
@@ -20,14 +27,16 @@ import {
 
 export default function Focus() {
   const { t } = useTranslation();
-  const [workDuration, setWorkDuration] = useState(25);
-  const [breakDuration, setBreakDuration] = useState(5);
+  const settings = getSettings();
+  const [workDuration, setWorkDuration] = useState(settings.workDuration);
+  const [breakDuration, setBreakDuration] = useState(settings.breakDuration);
   const [timeLeft, setTimeLeft] = useState(workDuration * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [showBreathingExercise, setShowBreathingExercise] = useState(false);
   const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const sessionStartTimeRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (isRunning) {
@@ -51,6 +60,23 @@ export default function Focus() {
 
   const handleSessionComplete = () => {
     setIsRunning(false);
+
+    // Save the completed session
+    if (sessionStartTimeRef.current) {
+      const endTime = new Date().toISOString();
+      const duration = isBreak ? breakDuration : workDuration;
+
+      addFocusSession({
+        startTime: sessionStartTimeRef.current,
+        endTime,
+        duration,
+        type: isBreak ? 'break' : 'work',
+        completed: true,
+      });
+
+      sessionStartTimeRef.current = null;
+    }
+
     if (!isBreak) {
       setIsBreak(true);
       setTimeLeft(breakDuration * 60);
@@ -62,6 +88,9 @@ export default function Focus() {
 
   const handleStart = () => {
     setIsRunning(true);
+    if (!sessionStartTimeRef.current) {
+      sessionStartTimeRef.current = new Date().toISOString();
+    }
   };
 
   const handlePause = () => {
@@ -72,6 +101,7 @@ export default function Focus() {
     setIsRunning(false);
     setIsBreak(false);
     setTimeLeft(workDuration * 60);
+    sessionStartTimeRef.current = null;
   };
 
   const formatTime = (seconds: number) => {
@@ -198,9 +228,11 @@ export default function Focus() {
               <Select
                 value={workDuration.toString()}
                 onValueChange={(value) => {
-                  setWorkDuration(parseInt(value));
+                  const newDuration = parseInt(value);
+                  setWorkDuration(newDuration);
+                  updateSettings({ workDuration: newDuration });
                   if (!isRunning && !isBreak) {
-                    setTimeLeft(parseInt(value) * 60);
+                    setTimeLeft(newDuration * 60);
                   }
                 }}
               >
@@ -221,7 +253,11 @@ export default function Focus() {
               <label className="block text-sm font-medium mb-2">{t('focus.breakDuration')}</label>
               <Select
                 value={breakDuration.toString()}
-                onValueChange={(value) => setBreakDuration(parseInt(value))}
+                onValueChange={(value) => {
+                  const newDuration = parseInt(value);
+                  setBreakDuration(newDuration);
+                  updateSettings({ breakDuration: newDuration });
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />

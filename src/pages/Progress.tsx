@@ -8,6 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import {
+  getData,
+  type UserStats,
+  type Achievement,
+  type WeeklyData
+} from '@/lib/storage';
+import {
   Zap,
   Trophy,
   Flame,
@@ -26,39 +32,20 @@ import {
 export default function Progress() {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userStats, setUserStats] = useState<UserStats>(getData().userStats);
+  const [achievements, setAchievements] = useState<Achievement[]>(getData().achievements);
+  const [weeklyData, setWeeklyData] = useState<WeeklyData[]>(getData().weeklyData);
 
-  const [userData] = useState({
-    level: 3,
-    progress: 65,
-    streak: 7,
-    longestStreak: 12,
-    tasksCompleted: 48,
-    focusMinutes: 340,
-    achievements: [
-      { id: 1, name: 'First Steps', desc: 'Complete your first task', unlocked: true, icon: '🎯' },
-      { id: 2, name: 'Week Warrior', desc: '7-day streak', unlocked: true, icon: '🔥' },
-      { id: 3, name: 'Focus Master', desc: '50+ focus sessions', unlocked: false, icon: '⏱️' },
-      { id: 4, name: 'Task Champion', desc: 'Complete 100 tasks', unlocked: false, icon: '💯' },
-      { id: 5, name: 'Consistency King', desc: '30-day streak', unlocked: false, icon: '👑' },
-      { id: 6, name: 'Night Owl', desc: 'Complete task after 10pm', unlocked: false, icon: '🦉' },
-    ],
-    weeklyData: [
-      { day: 'Mon', tasks: 5, minutes: 45 },
-      { day: 'Tue', tasks: 8, minutes: 60 },
-      { day: 'Wed', tasks: 6, minutes: 50 },
-      { day: 'Thu', tasks: 9, minutes: 70 },
-      { day: 'Fri', tasks: 7, minutes: 55 },
-      { day: 'Sat', tasks: 4, minutes: 30 },
-      { day: 'Sun', tasks: 5, minutes: 35 },
-    ],
-    recentMilestones: [
-      { date: '2 days ago', text: 'Completed 7-day streak!', icon: '🔥' },
-      { date: '1 week ago', text: 'Reached Level 3', icon: '🎉' },
-    ],
-  });
+  useEffect(() => {
+    // Load data from localStorage
+    const data = getData();
+    setUserStats(data.userStats);
+    setAchievements(data.achievements);
+    setWeeklyData(data.weeklyData);
+  }, []);
 
-  const maxTasks = Math.max(...userData.weeklyData.map(d => d.tasks));
-  const maxMinutes = Math.max(...userData.weeklyData.map(d => d.minutes));
+  const maxTasks = Math.max(...weeklyData.map(d => d.tasks), 1);
+  const maxMinutes = Math.max(...weeklyData.map(d => d.minutes), 1);
 
   return (
     <div className="min-h-screen bg-background">
@@ -143,22 +130,22 @@ export default function Progress() {
                   </div>
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-2xl font-bold mb-2">Level {userData.level}</h2>
+                  <h2 className="text-2xl font-bold mb-2">Level {userStats.level}</h2>
                   <p className="text-muted-foreground mb-3">
-                    {100 - userData.progress}% until Level {userData.level + 1}
+                    {100 - userStats.progress}% until Level {userStats.level + 1}
                   </p>
-                  <ProgressBar value={userData.progress} className="h-2 mb-2" />
-                  <p className="text-sm text-muted-foreground">{userData.progress}% complete</p>
+                  <ProgressBar value={userStats.progress} className="h-2 mb-2" />
+                  <p className="text-sm text-muted-foreground">{userStats.progress}% complete</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
                     <Flame className="h-5 w-5 text-primary mx-auto mb-1" />
-                    <p className="text-xl font-bold">{userData.streak}</p>
+                    <p className="text-xl font-bold">{userStats.streak}</p>
                     <p className="text-xs text-muted-foreground">Days</p>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
                     <CheckCircle2 className="h-5 w-5 text-primary mx-auto mb-1" />
-                    <p className="text-xl font-bold">{userData.tasksCompleted}</p>
+                    <p className="text-xl font-bold">{userStats.tasksCompleted}</p>
                     <p className="text-xs text-muted-foreground">Tasks</p>
                   </div>
                 </div>
@@ -172,8 +159,8 @@ export default function Progress() {
                   <span className="text-sm text-muted-foreground">Total Focus Time</span>
                   <Clock className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userData.focusMinutes}</p>
-                <p className="text-xs text-muted-foreground">minutes ({(userData.focusMinutes / 60).toFixed(1)} hours)</p>
+                <p className="text-3xl font-bold">{userStats.focusMinutes}</p>
+                <p className="text-xs text-muted-foreground">minutes ({(userStats.focusMinutes / 60).toFixed(1)} hours)</p>
               </Card>
 
               <Card className="p-6 glass hover-lift">
@@ -181,7 +168,7 @@ export default function Progress() {
                   <span className="text-sm text-muted-foreground">Longest Streak</span>
                   <Flame className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userData.longestStreak}</p>
+                <p className="text-3xl font-bold">{userStats.longestStreak}</p>
                 <p className="text-xs text-muted-foreground">days in a row</p>
               </Card>
 
@@ -191,7 +178,7 @@ export default function Progress() {
                   <Award className="h-5 w-5 text-primary" />
                 </div>
                 <p className="text-3xl font-bold">
-                  {userData.achievements.filter(a => a.unlocked).length}/{userData.achievements.length}
+                  {achievements.filter(a => a.unlocked).length}/{achievements.length}
                 </p>
                 <p className="text-xs text-muted-foreground">unlocked</p>
               </Card>
@@ -201,7 +188,7 @@ export default function Progress() {
                   <span className="text-sm text-muted-foreground">This Week</span>
                   <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userData.weeklyData.reduce((sum, d) => sum + d.tasks, 0)}</p>
+                <p className="text-3xl font-bold">{weeklyData.reduce((sum, d) => sum + d.tasks, 0)}</p>
                 <p className="text-xs text-muted-foreground">tasks completed</p>
               </Card>
             </div>
@@ -226,7 +213,7 @@ export default function Progress() {
                     <div>
                       <p className="text-sm font-medium mb-3 text-muted-foreground">Tasks Completed</p>
                       <div className="space-y-2">
-                        {userData.weeklyData.map((day, i) => (
+                        {weeklyData.map((day, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <span className="text-xs w-8 text-muted-foreground">{day.day}</span>
                             <div className="flex-1 h-8 bg-muted/30 rounded-lg overflow-hidden">
@@ -246,7 +233,7 @@ export default function Progress() {
                     <div>
                       <p className="text-sm font-medium mb-3 text-muted-foreground">Focus Minutes</p>
                       <div className="space-y-2">
-                        {userData.weeklyData.map((day, i) => (
+                        {weeklyData.map((day, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <span className="text-xs w-8 text-muted-foreground">{day.day}</span>
                             <div className="flex-1 h-8 bg-muted/30 rounded-lg overflow-hidden">
@@ -270,10 +257,10 @@ export default function Progress() {
                 <Card className="p-6 glass">
                   <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <Award className="h-5 w-5 text-primary" />
-                    Achievements ({userData.achievements.filter(a => a.unlocked).length}/{userData.achievements.length})
+                    Achievements ({achievements.filter(a => a.unlocked).length}/{achievements.length})
                   </h3>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {userData.achievements.map((achievement) => (
+                    {achievements.map((achievement) => (
                       <Card
                         key={achievement.id}
                         className={`p-4 ${
@@ -306,19 +293,8 @@ export default function Progress() {
                     <Star className="h-5 w-5 text-primary" />
                     Recent Milestones
                   </h3>
-                  <div className="space-y-4">
-                    {userData.recentMilestones.map((milestone, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-4 p-4 rounded-lg bg-gradient-glow border border-primary/20 hover-lift"
-                      >
-                        <div className="text-3xl">{milestone.icon}</div>
-                        <div className="flex-1">
-                          <p className="font-medium">{milestone.text}</p>
-                          <p className="text-xs text-muted-foreground">{milestone.date}</p>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Keep completing tasks and focus sessions to unlock milestones!</p>
                   </div>
                 </Card>
               </TabsContent>
@@ -329,7 +305,7 @@ export default function Progress() {
               <Brain className="h-10 w-10 text-primary mx-auto mb-3" />
               <h2 className="text-2xl font-bold mb-2">You're Doing Great! 🚀</h2>
               <p className="text-muted-foreground mb-6">
-                Keep completing tasks and focus sessions to reach Level {userData.level + 1}
+                Keep completing tasks and focus sessions to reach Level {userStats.level + 1}
               </p>
               <Link to="/tasks">
                 <Button size="lg" className="bg-gradient-primary glow-primary">

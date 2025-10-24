@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import {
+  getData,
+  addTask,
+  updateTask,
+  deleteTaskFromStorage,
+  type Task
+} from '@/lib/storage';
+import {
   Zap,
   Plus,
   CheckCircle2,
@@ -24,41 +31,9 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 
-interface Task {
-  id: string;
-  title: string;
-  notes: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-  dueDate?: string;
-}
-
 export default function Tasks() {
   const { t } = useTranslation();
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: '1',
-      title: 'Review project proposal',
-      notes: 'Check budget and timeline',
-      completed: false,
-      priority: 'high',
-      dueDate: '2025-11-01',
-    },
-    {
-      id: '2',
-      title: 'Schedule team meeting',
-      notes: '',
-      completed: false,
-      priority: 'medium',
-    },
-    {
-      id: '3',
-      title: 'Update documentation',
-      notes: 'Add new API endpoints',
-      completed: true,
-      priority: 'low',
-    },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [formData, setFormData] = useState({
@@ -69,38 +44,44 @@ export default function Tasks() {
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    // Load tasks from localStorage
+    const data = getData();
+    setTasks(data.tasks);
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) return;
 
     if (editingTask) {
-      setTasks(
-        tasks.map((t) =>
-          t.id === editingTask.id
-            ? { ...t, ...formData }
-            : t
-        )
-      );
-      setEditingTask(null);
+      updateTask(editingTask.id, formData);
     } else {
-      const newTask: Task = {
-        id: Date.now().toString(),
-        completed: false,
-        ...formData,
-      };
-      setTasks([...tasks, newTask]);
+      addTask(formData);
     }
+
+    // Reload tasks
+    const data = getData();
+    setTasks(data.tasks);
 
     setFormData({ title: '', notes: '', priority: 'medium', dueDate: '' });
     setShowAddDialog(false);
+    setEditingTask(null);
   };
 
   const toggleTask = (id: string) => {
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      updateTask(id, { completed: !task.completed });
+      const data = getData();
+      setTasks(data.tasks);
+    }
   };
 
-  const deleteTask = (id: string) => {
-    setTasks(tasks.filter((t) => t.id !== id));
+  const handleDeleteTask = (id: string) => {
+    deleteTaskFromStorage(id);
+    const data = getData();
+    setTasks(data.tasks);
   };
 
   const startEdit = (task: Task) => {
@@ -173,7 +154,7 @@ export default function Tasks() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => deleteTask(task.id)}
+            onClick={() => handleDeleteTask(task.id)}
             className="h-8 w-8 text-destructive hover:text-destructive"
           >
             <Trash2 className="h-4 w-4" />

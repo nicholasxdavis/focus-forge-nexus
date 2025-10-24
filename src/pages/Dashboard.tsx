@@ -11,6 +11,13 @@ import { TutorialTooltip } from '@/components/TutorialTooltip';
 import { RatingPopup } from '@/components/RatingPopup';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import {
+  getData,
+  addTask,
+  updateTask,
+  getTasks,
+  type Task
+} from '@/lib/storage';
+import {
   Zap,
   Plus,
   CheckCircle2,
@@ -23,33 +30,23 @@ import {
   X,
 } from 'lucide-react';
 
-interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-}
-
 export default function Dashboard() {
   const { t } = useTranslation();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
   const [showRating, setShowRating] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: '1', title: 'Complete onboarding', completed: true, priority: 'high' },
-    { id: '2', title: 'Try the focus timer', completed: false, priority: 'medium' },
-    { id: '3', title: 'Add your first real task', completed: false, priority: 'medium' },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const [userLevel] = useState(3);
-  const [userProgress] = useState(65);
-  const [streak] = useState(7);
-  const [focusMinutes] = useState(45);
+  const [userStats, setUserStats] = useState(getData().userStats);
 
   useEffect(() => {
+    // Load data from localStorage
+    const data = getData();
+    setTasks(data.tasks);
+    setUserStats(data.userStats);
+
     // Check if user is new
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
     if (!hasSeenOnboarding) {
@@ -89,18 +86,23 @@ export default function Dashboard() {
 
   const addTask = () => {
     if (!newTask.trim()) return;
-    const task: Task = {
-      id: Date.now().toString(),
+    const task = addTask({
       title: newTask,
+      notes: '',
       completed: false,
       priority: 'medium',
-    };
-    setTasks([...tasks, task]);
+    });
+    setTasks(getTasks());
     setNewTask('');
   };
 
   const toggleTask = (id: string) => {
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      updateTask(id, { completed: !task.completed });
+      setTasks(getTasks());
+      setUserStats(getData().userStats);
+    }
   };
 
   const completedTasks = tasks.filter((t) => t.completed).length;
@@ -197,7 +199,7 @@ export default function Dashboard() {
                     <span className="text-sm text-muted-foreground">{t('dashboard.yourStreak')}</span>
                     <Flame className="h-5 w-5 text-primary" />
                   </div>
-                  <p className="text-3xl font-bold">{streak}</p>
+                  <p className="text-3xl font-bold">{userStats.streak}</p>
                   <p className="text-xs text-muted-foreground">{t('dashboard.days')}</p>
                 </Card>
               </TutorialTooltip>
@@ -207,9 +209,9 @@ export default function Dashboard() {
                   <span className="text-sm text-muted-foreground">{t('dashboard.level')}</span>
                   <Trophy className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{userLevel}</p>
-                <Progress value={userProgress} className="mt-2 h-2" />
-                <p className="text-xs text-muted-foreground mt-1">{userProgress}% to next level</p>
+                <p className="text-3xl font-bold">{userStats.level}</p>
+                <Progress value={userStats.progress} className="mt-2 h-2" />
+                <p className="text-xs text-muted-foreground mt-1">{userStats.progress}% to next level</p>
               </Card>
 
               <Card className="p-6 glass hover-lift">
@@ -217,7 +219,7 @@ export default function Dashboard() {
                   <span className="text-sm text-muted-foreground">{t('dashboard.focusTime')}</span>
                   <Timer className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold">{focusMinutes}</p>
+                <p className="text-3xl font-bold">{userStats.focusMinutes}</p>
                 <p className="text-xs text-muted-foreground">{t('dashboard.minutes')}</p>
               </Card>
 
