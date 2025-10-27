@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Heart, Target, Users, Lightbulb } from 'lucide-react';
@@ -37,6 +38,10 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="About BetterFocus - Our Story & Mission"
+        description="Learn about BetterFocus's mission to make productivity work for ADHD brains. Built by people who understand ADHD struggles firsthand."
+      />
       <Navbar />
 
       <section className="pt-32 pb-16 px-4">

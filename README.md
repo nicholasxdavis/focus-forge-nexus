@@ -1,73 +1,174 @@
-# Welcome to your Lovable project
+# BetterFocus - ADHD Productivity App
 
-## Project info
+**Productivity Built For Your ADHD Brain**
 
-**URL**: https://lovable.dev/projects/59184d7f-8662-421a-a52b-e344f08a74c4
+BetterFocus is a modern, ADHD-friendly productivity application built with React, TypeScript, and Tailwind CSS. Designed specifically for neurodivergent minds, it features task management, visual focus timers, gamification, mindfulness tools, and flexible organization.
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+- **Quick Task Capture**: Voice or text entry with auto-organization
+- **Visual Focus Timers**: Customizable Pomodoro-style work/break cycles
+- **Gamification System**: XP, levels, streaks, and achievements
+- **Mindfulness Tools**: Guided breathing exercises and focus resets
+- **Flexible Organization**: Smart auto-tagging and adaptive sorting
+- **Multi-language Support**: English, Spanish, French, and German
+- **Beautiful UI**: Dark theme with cyan accent (#0dd5c8) and smooth animations
+- **Fully Responsive**: Works seamlessly on desktop, tablet, and mobile
 
-**Use Lovable**
+## 🚀 Quick Start
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/59184d7f-8662-421a-a52b-e344f08a74c4) and start prompting.
+### Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js 18+ and npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Navigate to the project directory
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🛠️ Tech Stack
 
-**Use GitHub Codespaces**
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: shadcn/ui (Radix UI primitives)
+- **Routing**: React Router v6
+- **State Management**: React Query (TanStack Query)
+- **Animations**: Framer Motion + AOS (Animate On Scroll)
+- **Internationalization**: i18next + react-i18next
+- **Icons**: Lucide React
+- **Forms**: React Hook Form + Zod validation
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📁 Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # shadcn/ui components
+│   ├── Navbar.tsx      # Main navigation
+│   ├── Footer.tsx      # Site footer
+│   └── SEO.tsx         # SEO meta tag manager
+├── pages/              # Route pages
+│   ├── Home.tsx        # Landing page
+│   ├── Dashboard.tsx   # Main app dashboard
+│   ├── Tasks.tsx       # Task management
+│   ├── Focus.tsx       # Focus timer
+│   └── Progress.tsx    # User progress tracking
+├── i18n/               # Internationalization
+│   └── locales/        # Translation files
+├── lib/                # Utility functions
+│   ├── storage.ts      # LocalStorage helpers
+│   └── utils.ts        # General utilities
+├── hooks/              # Custom React hooks
+├── index.css           # Global styles & design system
+└── App.tsx             # Root component
 
-This project is built with:
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🎨 Design System
 
-## How can I deploy this project?
+BetterFocus uses a comprehensive design system defined in `src/index.css`:
 
-Simply open [Lovable](https://lovable.dev/projects/59184d7f-8662-421a-a52b-e344f08a74c4) and click on Share -> Publish.
+- **Primary Color**: #0dd5c8 (cyan/teal)
+- **Background**: #161616 (dark)
+- **Typography**: Geist font family
+- **Animations**: Smooth transitions, glow effects, hover lifts
+- **Components**: Glass morphism, gradient buttons, semantic color tokens
 
-## Can I connect a custom domain to my Lovable project?
+All colors use HSL values for better theming support.
 
-Yes, you can!
+## 🌐 Deployment
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Via Lovable
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Simply open [Lovable](https://lovable.dev/projects/59184d7f-8662-421a-a52b-e344f08a74c4) and click on Share → Publish.
+
+### Manual Deployment
+
+#### Netlify
+
+1. Build the project: `npm run build`
+2. Deploy the `dist` folder to Netlify
+3. The `_redirects` file handles SPA routing automatically
+
+#### Vercel
+
+1. Import your GitHub repository
+2. Set build command: `npm run build`
+3. Set output directory: `dist`
+4. Deploy!
+
+## 🔧 Available Scripts
+
+```sh
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
+
+## 🌍 Custom Domain
+
+To connect a custom domain:
+1. Navigate to Project > Settings > Domains in Lovable
+2. Click "Connect Domain"
+3. Follow the DNS configuration instructions
+
+[Learn more about custom domains](https://docs.lovable.dev/features/custom-domain)
+
+## 📱 Progressive Web App (PWA)
+
+BetterFocus includes PWA support via `manifest.json`:
+- Installable on mobile devices
+- Offline-capable (when service worker is added)
+- Native app-like experience
+
+## 🔍 SEO Features
+
+- Dynamic meta tags with SEO component
+- Open Graph tags for social sharing
+- Twitter Card support
+- Sitemap.xml for search engines
+- Semantic HTML5 structure
+- robots.txt for crawler control
+
+## 🧪 Browser Support
+
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+## 📄 License
+
+This project is open source and available for personal and commercial use.
+
+## 🤝 Contributing
+
+This project is managed via Lovable. To contribute:
+1. Make changes via Lovable or your IDE
+2. Commit changes to the repository
+3. Changes sync automatically
+
+## 🔗 Links
+
+- **Project URL**: https://lovable.dev/projects/59184d7f-8662-421a-a52b-e344f08a74c4
+- **Documentation**: https://docs.lovable.dev
+- **Support**: Contact via the app's contact form
+
+---
+
+Built with ❤️ for ADHD minds everywhere

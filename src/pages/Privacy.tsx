@@ -1,18 +1,34 @@
+import { useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
+import { Shield } from 'lucide-react';
+import AOS from 'aos';
 
 export default function Privacy() {
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Privacy Policy - BetterFocus"
+        description="BetterFocus privacy policy. Learn how we protect your data, what information we collect, and your privacy rights."
+      />
       <Navbar />
 
       <section className="pt-32 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          <h1 className="text-5xl font-bold mb-8">Privacy Policy</h1>
+          <div data-aos="fade-up" className="text-center mb-12">
+            <Shield className="h-16 w-16 text-primary mx-auto mb-4" />
+            <h1 className="text-5xl font-bold mb-4">Privacy Policy</h1>
+            <p className="text-muted-foreground">Your privacy matters. Here's how we protect it.</p>
+          </div>
           
-          <Card className="p-8 glass border-border/50 prose prose-invert max-w-none">
-            <p className="text-muted-foreground mb-6">
+          <Card data-aos="fade-up" data-aos-delay="100" className="p-8 glass border-border/50 prose prose-invert max-w-none space-y-6">
+            <p className="text-sm text-muted-foreground">
               <strong>Last updated: {new Date().toLocaleDateString()}</strong>
             </p>
 

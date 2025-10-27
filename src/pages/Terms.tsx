@@ -1,18 +1,34 @@
+import { useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
+import { FileText } from 'lucide-react';
+import AOS from 'aos';
 
 export default function Terms() {
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Terms of Service - BetterFocus"
+        description="BetterFocus terms of service. Read our terms carefully before using the app. Learn about user rights, acceptable use, and more."
+      />
       <Navbar />
 
       <section className="pt-32 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          <h1 className="text-5xl font-bold mb-8">Terms of Service</h1>
+          <div data-aos="fade-up" className="text-center mb-12">
+            <FileText className="h-16 w-16 text-primary mx-auto mb-4" />
+            <h1 className="text-5xl font-bold mb-4">Terms of Service</h1>
+            <p className="text-muted-foreground">Please read these terms carefully before using BetterFocus.</p>
+          </div>
           
-          <Card className="p-8 glass border-border/50 prose prose-invert max-w-none">
-            <p className="text-muted-foreground mb-6">
+          <Card data-aos="fade-up" data-aos-delay="100" className="p-8 glass border-border/50 prose prose-invert max-w-none space-y-6">
+            <p className="text-sm text-muted-foreground">
               <strong>Last updated: {new Date().toLocaleDateString()}</strong>
             </p>
 

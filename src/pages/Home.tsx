@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Brain, Timer, Trophy, Wind, Sparkles, Target } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -55,6 +56,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO />
       <Navbar />
 
       {/* Hero Section */}

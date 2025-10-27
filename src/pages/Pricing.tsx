@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Check } from 'lucide-react';
@@ -32,6 +33,10 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Pricing - 100% Free Forever | BetterFocus"
+        description="BetterFocus is completely free for everyone. All features, no limitations, no hidden fees. Productivity tools for ADHD brains should be accessible to all."
+      />
       <Navbar />
 
       <section className="pt-32 pb-16 px-4">

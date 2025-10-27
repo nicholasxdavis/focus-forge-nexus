@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,19 +27,46 @@ export default function Contact() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple validation
-    if (!formData.name || !formData.email || !formData.message) {
+    // Validation
+    if (!formData.name.trim()) {
       toast({
-        title: 'Missing fields',
-        description: 'Please fill in all required fields.',
+        title: 'Name required',
+        description: 'Please enter your name.',
         variant: 'destructive',
       });
       return;
     }
 
-    // Simulate form submission
+    if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast({
+        title: 'Invalid email',
+        description: 'Please enter a valid email address.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!formData.message.trim()) {
+      toast({
+        title: 'Message required',
+        description: 'Please enter a message.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (formData.message.length > 1000) {
+      toast({
+        title: 'Message too long',
+        description: 'Please keep your message under 1000 characters.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Success
     toast({
-      title: 'Message sent!',
+      title: 'Message sent! 🎉',
       description: "We'll get back to you within 24 hours.",
     });
 
@@ -73,6 +101,10 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Contact Us - BetterFocus Support"
+        description="Get in touch with the BetterFocus team. We're here to help with questions, feedback, or support. Typically respond within 24 hours."
+      />
       <Navbar />
 
       <section className="pt-32 pb-16 px-4">
@@ -115,6 +147,8 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Your name"
+                    maxLength={100}
+                    className="transition-all focus:ring-2 focus:ring-primary"
                     required
                   />
                 </div>
@@ -127,6 +161,8 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
+                    maxLength={255}
+                    className="transition-all focus:ring-2 focus:ring-primary"
                     required
                   />
                 </div>
@@ -140,6 +176,8 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   placeholder="What's this about?"
+                  maxLength={200}
+                  className="transition-all focus:ring-2 focus:ring-primary"
                 />
               </div>
 
@@ -152,11 +190,16 @@ export default function Contact() {
                   onChange={handleChange}
                   placeholder="Tell us what's on your mind..."
                   rows={6}
+                  maxLength={1000}
+                  className="transition-all focus:ring-2 focus:ring-primary resize-none"
                   required
                 />
+                <p className="text-xs text-muted-foreground text-right">
+                  {formData.message.length}/1000 characters
+                </p>
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-primary glow-primary">
+              <Button type="submit" className="w-full bg-gradient-primary glow-primary hover-lift">
                 Send Message
               </Button>
             </form>

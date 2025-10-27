@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
 import { Brain, Timer, Trophy, Wind, Sparkles, Target, Zap, Users, Clock, Heart } from 'lucide-react';
 import AOS from 'aos';
@@ -92,6 +93,10 @@ export default function Features() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Features - BetterFocus ADHD Productivity App"
+        description="Discover all the ADHD-friendly features: quick task capture, visual focus timers, gamification, mindfulness tools, flexible organization, and adaptive feedback."
+      />
       <Navbar />
 
       {/* Hero */}

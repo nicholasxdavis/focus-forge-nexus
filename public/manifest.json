@@ -1,0 +1,19 @@
+{
+  "name": "BetterFocus - ADHD Productivity App",
+  "short_name": "BetterFocus",
+  "description": "The #1 ADHD-friendly productivity app. Task management, focus timers, mindfulness tools, and gamification designed for neurodivergent minds.",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0dd5c8",
+  "background_color": "#161616",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "health", "lifestyle"],
+  "lang": "en-US"
+}

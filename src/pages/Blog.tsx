@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Clock, User } from 'lucide-react';
@@ -89,6 +90,10 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="ADHD Productivity Blog - Tips, Research & Real Talk | BetterFocus"
+        description="Evidence-based ADHD productivity strategies, neuroscience insights, and real-world tips. Learn how to thrive with ADHD."
+      />
       <Navbar />
 
       <section className="pt-32 pb-16 px-4">
