@@ -432,154 +432,62 @@ export default function Dashboard() {
 
               {/* Calendar Tab */}
               <TabsContent value="calendar" className="space-y-6">
-                <Card className="p-6 glass">
-                  <h2 className="text-2xl font-bold mb-4">Weekly Overview</h2>
-                  <div className="grid grid-cols-7 gap-2">
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, idx) => (
-                      <div key={day} className="text-center">
-                        <div className="text-sm font-medium text-muted-foreground mb-2">{day}</div>
-                        <div className={`h-20 rounded-lg flex items-center justify-center ${idx === new Date().getDay() - 1 ? 'bg-primary/20 border-2 border-primary' : 'bg-muted/30'}`}>
-                          <div className="text-center">
-                            <div className="text-lg font-bold">{new Date().getDate() - new Date().getDay() + idx + 1}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {tasks.filter(t => t.completed).length > idx ? `${idx + 1} tasks` : '—'}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-
-                <Card className="p-6 glass">
-                  <h2 className="text-xl font-bold mb-4">Upcoming Deadlines</h2>
-                  <div className="space-y-3">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                        <Calendar className="h-5 w-5 text-primary" />
-                        <div className="flex-1">
-                          <div className="font-medium">Sample deadline {i}</div>
-                          <div className="text-sm text-muted-foreground">Due in {i + 1} days</div>
-                        </div>
-                      </div>
-                    ))}
+                <Card className="p-12 glass text-center border-primary/20 bg-gradient-glow animate-fade-in">
+                  <div className="max-w-md mx-auto">
+                    <Calendar className="h-16 w-16 text-primary mx-auto mb-4 animate-pulse-slow" />
+                    <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">Coming Soon</Badge>
+                    <h2 className="text-2xl font-bold mb-3">Calendar Integration</h2>
+                    <p className="text-muted-foreground mb-6">
+                      Visual calendar view with task scheduling, deadline tracking, and weekly planning is on the way!
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
+                      <span>📅 Visual planning</span>
+                      <span>•</span>
+                      <span>⏰ Deadline alerts</span>
+                      <span>•</span>
+                      <span>🗓️ Time blocking</span>
+                    </div>
                   </div>
                 </Card>
               </TabsContent>
 
               {/* Wellness Tab */}
               <TabsContent value="wellness" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="p-6 glass">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Heart className="h-6 w-6 text-primary" />
-                      <h2 className="text-xl font-bold">Daily Mood</h2>
+                <Card className="p-12 glass text-center border-primary/20 bg-gradient-glow animate-fade-in">
+                  <div className="max-w-md mx-auto">
+                    <Heart className="h-16 w-16 text-primary mx-auto mb-4 animate-pulse-slow" />
+                    <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">Coming Soon</Badge>
+                    <h2 className="text-2xl font-bold mb-3">Wellness Center</h2>
+                    <p className="text-muted-foreground mb-6">
+                      Mood tracking, break reminders, mindfulness exercises, and self-care tools are being perfected for you!
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
+                      <span>😊 Mood logging</span>
+                      <span>•</span>
+                      <span>🧘 Guided exercises</span>
+                      <span>•</span>
+                      <span>💆 Break timers</span>
                     </div>
-                    <div className="grid grid-cols-5 gap-2">
-                    {['😊', '🙂', '😐', '😔', '😢'].map((emoji, idx) => (
-                      <button
-                        key={idx}
-                        className="text-4xl p-4 rounded-lg hover:bg-muted/50 transition-all duration-200 hover:scale-110"
-                        aria-label={`Mood ${idx + 1}`}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                    </div>
-                  </Card>
-
-                  <Card className="p-6 glass">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Timer className="h-6 w-6 text-primary" />
-                      <h2 className="text-xl font-bold">Break Timer</h2>
-                    </div>
-                    <p className="text-muted-foreground mb-4">Take regular breaks to stay fresh</p>
-                    <Button className="w-full bg-gradient-primary glow-primary">
-                      Start 5-min Break
-                    </Button>
-                  </Card>
-                </div>
-
-                <Card className="p-6 glass">
-                  <h2 className="text-xl font-bold mb-4">Breathing Exercises</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {['Box Breathing', 'Deep Breathing', '4-7-8 Technique'].map((exercise) => (
-                      <button
-                        key={exercise}
-                        className="p-4 rounded-lg bg-muted/30 hover:bg-muted/50 cursor-pointer transition-all duration-200 hover:scale-105 text-left"
-                        onClick={() => toast({ title: `Starting ${exercise}` })}
-                      >
-                        <div className="font-medium mb-2">{exercise}</div>
-                        <div className="text-sm text-muted-foreground">2 min session</div>
-                      </button>
-                    ))}
                   </div>
                 </Card>
               </TabsContent>
 
               {/* Insights Tab */}
               <TabsContent value="insights" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card className="p-6 glass">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-muted-foreground">Peak Focus Time</span>
-                      <TrendingUp className="h-4 w-4 text-primary" />
-                    </div>
-                    <p className="text-2xl font-bold">10 AM - 12 PM</p>
-                  </Card>
-
-                  <Card className="p-6 glass">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-muted-foreground">Avg Session Length</span>
-                      <Timer className="h-4 w-4 text-primary" />
-                    </div>
-                    <p className="text-2xl font-bold">23 minutes</p>
-                  </Card>
-
-                  <Card className="p-6 glass">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-muted-foreground">Task Completion</span>
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                    </div>
-                    <p className="text-2xl font-bold">78%</p>
-                  </Card>
-                </div>
-
-                <Card className="p-6 glass">
-                  <h2 className="text-xl font-bold mb-4">Weekly Patterns</h2>
-                  <div className="space-y-4">
-                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day, idx) => (
-                      <div key={day}>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium">{day}</span>
-                          <span className="text-sm text-muted-foreground">{(idx + 3) * 20}%</span>
-                        </div>
-                        <Progress value={(idx + 3) * 20} className="h-2" />
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-
-                <Card className="p-6 glass">
-                  <h2 className="text-xl font-bold mb-4">AI Recommendations</h2>
-                  <div className="space-y-3">
-                    <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                      <div className="flex items-start gap-3">
-                        <Brain className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                        <div>
-                          <div className="font-medium mb-1">Try morning focus sessions</div>
-                          <div className="text-sm text-muted-foreground">Your productivity peaks between 9-11 AM</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                      <div className="flex items-start gap-3">
-                        <Heart className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                        <div>
-                          <div className="font-medium mb-1">Schedule breaks</div>
-                          <div className="text-sm text-muted-foreground">Take a 5-min break every 25 minutes</div>
-                        </div>
-                      </div>
+                <Card className="p-12 glass text-center border-primary/20 bg-gradient-glow animate-fade-in">
+                  <div className="max-w-md mx-auto">
+                    <Brain className="h-16 w-16 text-primary mx-auto mb-4 animate-pulse-slow" />
+                    <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">Coming Soon</Badge>
+                    <h2 className="text-2xl font-bold mb-3">AI-Powered Insights</h2>
+                    <p className="text-muted-foreground mb-6">
+                      Personalized productivity patterns, peak focus times, AI recommendations, and smart suggestions are being built!
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
+                      <span>🧠 Pattern analysis</span>
+                      <span>•</span>
+                      <span>📊 Peak hours</span>
+                      <span>•</span>
+                      <span>💡 Smart tips</span>
                     </div>
                   </div>
                 </Card>
@@ -587,59 +495,22 @@ export default function Dashboard() {
 
               {/* Goals Tab */}
               <TabsContent value="goals" className="space-y-6">
-                <Card className="p-6 glass">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold">Active Goals</h2>
-                    <Button size="sm" className="bg-gradient-primary glow-primary">
-                      <Plus className="h-4 w-4 mr-2" />
-                      New Goal
-                    </Button>
-                  </div>
-                  <div className="space-y-4">
-                    {[
-                      { title: 'Complete 50 tasks', current: 23, target: 50 },
-                      { title: '100 hours of focus', current: 47, target: 100 },
-                      { title: '30-day streak', current: userStats.streak, target: 30 },
-                    ].map((goal, idx) => (
-                      <div key={idx} className="p-4 rounded-lg bg-muted/30">
-                        <div className="flex justify-between mb-2">
-                          <span className="font-medium">{goal.title}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {goal.current}/{goal.target}
-                          </span>
-                        </div>
-                        <Progress value={(goal.current / goal.target) * 100} className="h-2" />
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="p-6 glass">
-                    <h2 className="text-xl font-bold mb-4">Weekly Target</h2>
-                    <div className="text-center">
-                      <div className="text-4xl font-bold mb-2">{completedTasks}/20</div>
-                      <p className="text-muted-foreground mb-4">Tasks completed this week</p>
-                      <Progress value={(completedTasks / 20) * 100} className="h-3" />
+                <Card className="p-12 glass text-center border-primary/20 bg-gradient-glow animate-fade-in">
+                  <div className="max-w-md mx-auto">
+                    <Star className="h-16 w-16 text-primary mx-auto mb-4 animate-pulse-slow" />
+                    <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">Coming Soon</Badge>
+                    <h2 className="text-2xl font-bold mb-3">Goal Tracking System</h2>
+                    <p className="text-muted-foreground mb-6">
+                      Custom goals, milestone tracking, progress charts, and motivational rewards system is coming soon!
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
+                      <span>🎯 Custom goals</span>
+                      <span>•</span>
+                      <span>🏆 Milestones</span>
+                      <span>•</span>
+                      <span>📈 Progress charts</span>
                     </div>
-                  </Card>
-
-                  <Card className="p-6 glass">
-                    <h2 className="text-xl font-bold mb-4">Monthly Focus</h2>
-                    <div className="text-center">
-                      <div className="text-4xl font-bold mb-2">{userStats.focusMinutes}/500</div>
-                      <p className="text-muted-foreground mb-4">Minutes focused this month</p>
-                      <Progress value={(userStats.focusMinutes / 500) * 100} className="h-3" />
-                    </div>
-                  </Card>
-                </div>
-
-                <Card className="p-6 glass text-center">
-                  <Star className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold mb-2">Stay Motivated!</h2>
-                  <p className="text-muted-foreground">
-                    You're making great progress. Keep crushing those goals!
-                  </p>
+                  </div>
                 </Card>
               </TabsContent>
             </Tabs>

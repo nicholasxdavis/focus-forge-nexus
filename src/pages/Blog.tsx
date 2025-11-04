@@ -143,12 +143,9 @@ export default function Blog() {
                       <span>{post.readTime}</span>
                     </div>
                   </div>
-                  <Link
-                    to={`/blog/${post.slug}`}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    Read more →
-                  </Link>
+                  <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                    Coming Soon
+                  </Badge>
                 </div>
               </Card>
             ))}

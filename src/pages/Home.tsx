@@ -102,16 +102,16 @@ export default function Home() {
               </Link>
             </div>
 
-            <div data-aos="fade-up" data-aos-delay="300" className="flex flex-col items-center gap-2">
+            <div data-aos="fade-up" data-aos-delay="300" className="flex flex-col items-center gap-2 animate-fade-in">
               <p className="text-sm text-muted-foreground">
                 ✨ {t('hero.trustedBy')}
               </p>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
                 <span>⭐⭐⭐⭐⭐ 4.9/5 rating</span>
-                <span>•</span>
-                <span>50,000+ active users</span>
-                <span>•</span>
-                <span>100% Free</span>
+                <span className="hidden sm:inline">•</span>
+                <span>50,000+ users</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="text-primary font-semibold">100% Free Forever</span>
               </div>
             </div>
           </div>

@@ -79,8 +79,8 @@ export default function Pricing() {
             </div>
 
             <Link to="/dashboard">
-              <Button size="lg" className="w-full bg-gradient-primary glow-primary text-lg py-6">
-                {t('nav.getStarted')} - It's Free!
+              <Button size="lg" className="w-full bg-gradient-primary glow-primary text-lg py-6 hover-lift transition-all duration-200">
+                {t('nav.getStarted')} - It's Free! 🚀
               </Button>
             </Link>
           </Card>

@@ -7,12 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Mail, MessageSquare, HelpCircle } from 'lucide-react';
+import { Mail, MessageSquare, HelpCircle, Send, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import AOS from 'aos';
 
 export default function Contact() {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,7 +25,7 @@ export default function Contact() {
     AOS.init({ duration: 800, once: true });
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation
@@ -63,6 +64,11 @@ export default function Contact() {
       });
       return;
     }
+
+    // Simulate submission
+    setIsSubmitting(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setIsSubmitting(false);
 
     // Success
     toast({
@@ -199,8 +205,23 @@ export default function Contact() {
                 </p>
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-primary glow-primary hover-lift">
-                Send Message
+              <Button 
+                type="submit" 
+                size="lg"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-primary glow-primary hover-lift transition-all duration-200"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-5 w-5" />
+                    Send Message 📧
+                  </>
+                )}
               </Button>
             </form>
           </Card>
