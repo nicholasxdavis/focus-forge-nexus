@@ -27,6 +27,8 @@ import {
   Menu,
   X,
   Brain,
+  Coffee,
+  ExternalLink,
 } from 'lucide-react';
 
 export default function Progress() {
@@ -82,29 +84,44 @@ export default function Progress() {
         >
           <nav className="p-4 space-y-2">
             <Link to="/dashboard">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start transition-all duration-200 hover:bg-primary/10">
                 <Target className="mr-2 h-4 w-4" />
                 {t('nav.dashboard')}
               </Button>
             </Link>
             <Link to="/tasks">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start transition-all duration-200 hover:bg-primary/10">
                 <CheckCircle2 className="mr-2 h-4 w-4" />
                 Tasks
               </Button>
             </Link>
             <Link to="/focus">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start transition-all duration-200 hover:bg-primary/10">
                 <Clock className="mr-2 h-4 w-4" />
                 Focus Mode
               </Button>
             </Link>
             <Link to="/progress">
-              <Button variant="default" className="w-full justify-start bg-primary">
+              <Button variant="default" className="w-full justify-start bg-primary transition-all duration-200">
                 <Trophy className="mr-2 h-4 w-4" />
                 Progress
               </Button>
             </Link>
+            
+            <div className="pt-4 mt-4 border-t border-border">
+              <a 
+                href="https://buymeacoffee.com/galore" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <Button variant="ghost" className="w-full justify-start transition-all duration-200 hover:bg-primary/10 text-primary">
+                  <Coffee className="mr-2 h-4 w-4" />
+                  <span className="flex-1 text-left">Support Us</span>
+                  <ExternalLink className="h-3 w-3 opacity-50" />
+                </Button>
+              </a>
+            </div>
           </nav>
         </aside>
 

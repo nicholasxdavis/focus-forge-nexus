@@ -31,6 +31,11 @@ import {
   X,
   ArrowLeft,
   Loader2,
+  Coffee,
+  ExternalLink,
+  Target,
+  Trophy,
+  Clock,
 } from 'lucide-react';
 
 export default function Tasks() {

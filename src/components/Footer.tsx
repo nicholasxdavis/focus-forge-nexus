@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Zap, Twitter, Github, Linkedin } from 'lucide-react';
+import { Zap, Twitter, Github, Linkedin, Coffee, Heart } from 'lucide-react';
 
 export const Footer = () => {
   const { t } = useTranslation();
@@ -17,12 +17,22 @@ export const Footer = () => {
               <span className="text-xl font-bold">BetterFocus</span>
             </Link>
             <p className="text-sm text-muted-foreground">{t('footer.tagline')}</p>
+            <a
+              href="https://buymeacoffee.com/galore"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-primary hover:underline transition-colors animate-fade-in"
+            >
+              <Coffee className="h-4 w-4" />
+              <span>Support Us ☕</span>
+            </a>
             <div className="flex space-x-4">
               <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
               </a>
@@ -31,6 +41,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="GitHub"
               >
                 <Github className="h-5 w-5" />
               </a>
@@ -39,6 +50,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
@@ -112,9 +124,12 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border text-center">
+        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} BetterFocus. {t('footer.rights')}
+            © {currentYear} BetterFocus. Made with <Heart className="inline h-4 w-4 text-destructive animate-pulse-slow" fill="currentColor" /> for ADHD minds everywhere.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            100% Free Forever • No Ads • Privacy First
           </p>
         </div>
       </div>

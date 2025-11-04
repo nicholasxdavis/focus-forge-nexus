@@ -24,6 +24,13 @@ import {
   Wind,
   ArrowLeft,
   CheckCircle2,
+  Coffee,
+  ExternalLink,
+  Target,
+  Timer,
+  Trophy,
+  Menu,
+  X,
 } from 'lucide-react';
 
 export default function Focus() {
